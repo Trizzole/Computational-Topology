@@ -3,12 +3,18 @@ title: "Computational Topology Part A"
 subtitle: "Computational Geometric topology"
 format: 
   revealjs:
+    theme: [simple, quarto-assets/presentation-theme.scss]
     smaller: false
     scrollable: false
     show-slide-number: all
+    toc: true
+    toc-depth: 1
     preview-links: true
     slide-number: h.v
     multiplex: true
+    embed-resources: true
+    auto-animate: true
+    footer: "Thomas Reinke"
 author:
   - name: Thomas Reinke
     affiliation: 
@@ -20,8 +26,7 @@ author:
         url: https://www.baylor.edu
     email: thomas_reinke1@baylor.edu
 date: last-modified
-theme: [default, theme.scss]
-embed-resources: true
+logo: "quarto-assets/baylor.png"
 license: "CC BY-NC"
 copyright: 
   holder: Thomas Reinke
@@ -44,6 +49,14 @@ conflict_prefer("select", "dplyr")
 theme_set(theme_minimal())
 knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 100), tidy = FALSE, fig.align = 'center')
 ```
+
+::: {.content-hidden}
+$$
+{{< include quarto-assets/_macros.tex >}}
+$$
+:::
+
+  
 
 ## Resources
 
@@ -74,15 +87,15 @@ knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 100), tidy = FALSE, fig.al
 
 # I Graphs
 
--   Connected Components
+-   [Connected Components](#sec-ConnectedComponents)
 
--   Curves in the Plane
+-   [Curves in the Plane](#sec-CurvesPlane)
 
--   Knots & Links
+-   [Knots & Links](#sec-KnotsLinks)
 
--   Planar Graphs
+-   [Planar Graphs](#sec-PlanarGraphs)
 
-# I.1 Graphs - Connected Components
+# I.1 Graphs - Connected Components {#sec-ConnectedComponents}
 
 ## Simple Graphs
 
@@ -95,8 +108,6 @@ Graph
     line segments or curves
 
 -   Crossings of curves are allowed
-
-## Simple Graphs
 
 Simple Graph
 
@@ -113,7 +124,7 @@ Simple Graph
 
 ## Simple Graphs
 
-:::::: columns
+:::: columns
 ::: {.column width="70%"}
 -   The complete graph with five vertices, $K_5$
 
@@ -122,6 +133,31 @@ Simple Graph
 
 -   The four thick edges connect the same five vertices and form a
     spanning tree of the complete graph
+
+-   In a simple graph, a *path* between vertices $u$ and $v$ can be
+    described by a sequence of vertices,
+    $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and
+    $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+
+-   The *length* of this path is its number of edges, $k$
+
+-   Vertices can repeat, so the path can backtrack or cross itself
+
+-   The path is *simple* if the vertices in the sequence are distinct,
+    so $u_i \neq u_j$ whenever $i \neq j$
+    
+Connectedness
+
+:   A simple graph is *connected* if $\exists$ a path between every pair
+    of vertices
+
+-   A *(connected) component* is a maximal subgraph that is connected
+
+-   The smallest connected graphs are the *trees*, which are
+    characterized by having a unique simple path between every pair of
+    vertices
+
+-   Removing any one edge disconnects the tree
 :::
 
 ::: {.column width="30%"}
@@ -142,44 +178,17 @@ strict graph G {
 ```
 :::
 
-::: aside
-spanning tree: a maximal acyclic set of edges or as a tree that contains
-every vertex
-:::
-::::::
+<!-- ::: aside -->
+<!-- spanning tree: a maximal acyclic set of edges or as a tree that contains -->
+<!-- every vertex -->
+<!-- ::: -->
+::::
 
 ## Simple Graphs
 
--   In a simple graph, a *path* between vertices $u$ and $v$ can be
-    described by a sequence of vertices,
-    $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and
-    $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+Spanning tree
 
--   The *length* of this path is its number of edges, $k$
-
--   Vertices can repeat, so the path can backtrack or cross itself
-
--   The path is *simple* if the vertices in the sequence are distinct,
-    so $u_i \neq u_j$ whenever $i \neq j$
-
-## Simple Graphs
-
-Connectedness
-
-:   A simple graph is *connected* if $\exists$ a path between every pair
-    of vertices
-
--   A *(connected) component* is a maximal subgraph that is connected
-
--   The smallest connected graphs are the *trees*, which are
-    characterized by having a unique simple path between every pair of
-    vertices
-
--   Removing any one edge disconnects the tree
-
-## Simple Graphs
-
--   A *spanning tree* of $G = (V, E)$ is a tree $(V, T)$ with
+:   A *spanning tree* of $G = (V, E)$ is a tree $(V, T)$ with
     $T \subseteq  E$
 
 -   It has the same vertex set as the graph and uses a minimal set of
@@ -187,12 +196,10 @@ Connectedness
 
 -   This requires that the graph is connected to begin with
 
-    -   A graph is connected iff it has a spanning tree
+-   A graph is connected iff it has a spanning tree
 
 -   An alternative characterization of a connected graph can be based on
     the impossibility to cut it in two
-
-## Simple Graphs
 
 Separation
 
@@ -204,7 +211,9 @@ Separation
 
 ## Topological Spaces
 
-A *topology* on a point set $\mathbb{X}$ is a collection $\mathcal{U}$
+Topology
+
+: A *topology* on a point set $\mathbb{X}$ is a collection $\mathcal{U}$
 of subsets of $\mathbb{X}$, called *open sets*, such that
 
 1.  $\mathbb{X}$ is open and the empty set $\emptyset$ is open
@@ -214,8 +223,6 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 3. if $U_i$ is open $\forall i$ in some possibly infinite, possibly
      uncountable, index set, then $\bigcup\limits_{i = 1}^n U_i$ is open
 
-## Topological Spaces
-
 -   The pair $(\mathbb{X}, \mathcal{U})$ is a *topological space*
 
 -   Usually $\mathcal{U}$ is understood and we refer to $\mathbb{X}$ as
@@ -224,8 +231,6 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 -   Since we can repeat the pairwise intersection, condition 2 is
     equivalent to requiring that common intersections of finitely many
     open sets are open
-
-## Topological Spaces
 
 -   A *basis* of a topology on a point set $\mathbb{X}$ is a collection
     $\mathcal{B}$ of subsets of $\mathbb{X}$, called *basis elements*,
@@ -247,14 +252,12 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 - Consider the real line, $\mathbb{X} = \mathbb{R}$, and let
 $\mathcal{B}$ be the collection of open intervals
 
-  + This gives us the usual topology of the real line
+- This gives us the usual topology of the real line
 
 - Note that the intersection of intervals $(-1/k, +1/k)$, for infinitely many integers $k \geq 1$, is the point, 0
 
 - This is not an open set which illustrates the need for restriction on
 finite intersections
-
-## Topological Spaces
 
 - Often, we have sets inside of sets, $\mathbb{Y} \subseteq \mathbb{X}$,
 which we can borrow the topology of the latter for the former
@@ -262,8 +265,6 @@ which we can borrow the topology of the latter for the former
 - If $\mathcal{U}$ is a topology of $\mathbb{X}$ then the collection of sets
 $\mathbb{Y} \cap U$, for $U \in \mathcal{U}$, is the *subspace topology*
 of $\mathbb{Y}$
-
-## Topological Spaces
 
 ### Subspace example
 
@@ -273,14 +274,13 @@ of $\mathbb{Y}$
 
 - The intersections of open intervals with $[0, 1]$ form the basis of the subspace topology of the closed interval
 
-  + Note that the interval $(1/2, 1]$ is considered an open
+- Note that the interval $(1/2, 1]$ is considered an open
 set in $[0, 1]$, but isn’t open when considered as a set in
 $\mathbb {R}$
 
 ## Continuity, Paths, and Connectedness
 
-- A function from one topological space to another is *continuous* if the
-preimage of every set is open
+- A function from one topological space to another is *continuous* if the preimage of every set is open
 
 - This is derived from the same concept of continuity in calculus
 
@@ -288,18 +288,16 @@ preimage of every set is open
 $\forall \, 0 < \epsilon < 1$, $(-\epsilon, \epsilon)$ is open, but
 $f^{-1}((-\epsilon, \epsilon))$ is not
 
-## Continuity, Paths, and Connectedness
+Path
 
-- A *path* is a continuous function from the unit interval,
+: A *path* is a continuous function from the unit interval,
 $\gamma : [0, 1] \rightarrow \mathbb{X}$
 
-  + It *connects* the point $\gamma(0)$ to the point $\gamma(1)$ in $\mathbb{X}$
+- It *connects* the point $\gamma(0)$ to the point $\gamma(1)$ in $\mathbb{X}$
 
-- Similar to paths in graphs, we allows for self-intersections, that is, values $s \neq t$
-in the unit interval for which $\gamma(s) = \gamma(t)$
+- Similar to paths in graphs, we allows for self-intersections, that is, values $s \neq t$ in the unit interval for which $\gamma(s) = \gamma(t)$
 
-  + If there are no self intersections, then the function is injective and the path is
-*simple*
+- If there are no self intersections, then the function is injective and the path is *simple*
 
 :::{.notes}
 We can adapt this definition to connectedness of topological
@@ -308,15 +306,15 @@ spaces
 
 ## Continuity, Paths, and Connectedness
 
-A topological space is *path-connected* if every pair of points is
+Path Connected
+
+: A topological space is *path-connected* if every pair of points is
     connected by a path
 
 - There is a counterpart of our second definition of connectedness
 
 - We formulate it with open sets and there is an equivalent formulation from
 *closed sets*, which are by definition, complements of open sets
-
-## Continuity, Paths, and Connectedness
 
 A *separation* of a topological space $\mathbb{X}$ is a partition
     $\mathbb{X} = U \, \dot \cup \, W$ into two non-empty, open subsets.
@@ -327,7 +325,6 @@ most spaces we will encounter they are the same
 
 - For example the [comb](https://en.wikipedia.org/wiki/Comb_space) with a single tooth deleted is connected, but not path-connected
 
-::: {.smaller}
 ## Disjoint Set Systems
 
 ### Graphs & algorithmically determining connectedness
@@ -340,17 +337,14 @@ $[n]$
 - Formulated as an abstract data type, we have two operations
 manipulating the system:
 
-  + FIND($i$): return the name of the set that contains $i$.
+  1. FIND($i$): return the name of the set that contains $i$.
 
-  + UNION($i,j$): assuming $i$ and $j$ belong to different sets in the
+  2. UNION($i,j$): assuming $i$ and $j$ belong to different sets in the
     system, replace the two sets by their union.
 
 ::: {.notes}
 Back to graphs & considering algorithmic question of connectedness. It is based on maintaining a disjoint set system.
 :::
-:::
-
-## Disjoint Set Systems
 
 - We need the `find` operation to test whether $i$ and $j$ indeed belong to different sets
 
@@ -359,8 +353,6 @@ Back to graphs & considering algorithmic question of connectedness. It is based 
 - Starting with $n$ singleton sets, it therefore takes $n-1$ union operations to get to a single set
 
 - Since trees connecting the $n$ vertices can be generated this way, we thus have a proof that every tree with $n$ vertices has $m = n - 1$ edges
-
-## Disjoint Set Systems
 
 - A typical data structure implementation stores each set as a tree
 embedded in a linear array, $V[1..n]$
@@ -502,8 +494,7 @@ parent of the other
 - This is not a very efficient method, especially for long paths that may
 be traversed repeatedly
 
-- We prevent this by always linking the smaller
-tree to the larger one
+- We prevent this by always linking the smaller tree to the larger one
 
 ```         
 void UNION(i,j)
@@ -514,18 +505,15 @@ void UNION(i,j)
     endif
 ```
 
-:::{.smaller}
-## Improving the running time
-
 - A tree of $k$ nodes cannot have paths longer than $\log_2 k$ edges,
 since the size of the subtree grows by at least a factor of two each
 time we pass the parent
 
-- To improve the efficiency even more, we
-compress paths whenever we traverse them
-
-- We also assume that roots are
-identified by pointing to themselves
+- To improve the efficiency even more, we compress paths whenever we traverse them
+    
+- We also assume that roots are identified by pointing to themselves
+    
+## Improving the running time
 
 ```         
 int FIND(i)
@@ -538,9 +526,6 @@ int FIND(i)
 - If $i$ is not the root, then the function recursively finds the root,
 makes it the parent of $i$, reports the root, and exits; otherwise, the
 function reports $i$ as the root and exits
-:::
-
-## Improving the running time
 
 - In analyzing the algorithm, we are interested in the running-time for
 executing a sequence of $m$ union and find operations; finding tight
@@ -548,18 +533,16 @@ bounds is a difficult problem
 
 - For $n$ vertices, the running-time is never more than $O(m\alpha (n))$, where $\alpha(n)$ is the slow growing inverse of the [Ackermann function](https://en.wikipedia.org/wiki/Ackermann_function)
 
-- Eventually, $\alpha(n)$ goes to infinity, but to reach even beyond five, we need an
-astronomically large number of vertices, larger than electrons in the
-universe
+- Eventually, $\alpha(n)$ goes to infinity, but to reach even beyond five, we need an astronomically large number of vertices, larger than electrons in the universe
 
-  + For practical purposes, the algorithm takes constant average time per operation, but theoretically not true
+- For practical purposes, the algorithm takes constant average time per operation, but theoretically not true
   
-# I.2 Graphs - Curves in the Plane
+# I.2 Graphs - Curves in the Plane {#sec-CurvesPlane}
 
 
-# I.3 Graphs - Knots & Links
+# I.3 Graphs - Knots & Links {#sec-KnotsLinks}
 
-# I.4 Graphs - Planar Graphs
+# I.4 Graphs - Planar Graphs {#sec-PlanarGraphs}
 
 # II Surfaces
 
