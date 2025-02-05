@@ -1,0 +1,136 @@
+// col2rgb("steelblue") |> as.numeric() |> as.hexmode() |> paste0(collapse = "")
+$steelblue: #4682b4;
+// col2rgb("firebrick") |> as.numeric() |> as.hexmode() |> paste0(collapse = "")
+$firebrick: #b22222;
+// col2rgb("forestgreen") |> as.numeric() |> as.hexmode() |> paste0(collapse = "")
+$forestgreen: #228b22;
+
+// "gray70" |> farver::decode_colour() |> farver::encode_colour()
+$gray70: #b3b3b3;
+
+// rgb(152, 122, 90, maxColorValue = 255)
+$keynotebrown: #987a5a;
+
+.callout {
+  background-color: white;
+}
+
+body ::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+}
+
+p {
+  font-size: .85em;
+}
+
+ul {
+  font-size: .75em;
+}
+
+li {
+  font-size: .75em;
+}
+
+.cell {
+  font-size:     1em;
+  margin-left:   8px;
+  margin-right:  8px;
+  margin-top:    8px;
+  margin-bottom: 8px;
+}
+
+.example {
+  font-size:     .85em;
+  color: $firebrick;
+}
+
+.subtext {
+  font-size:     .85em;
+  color: $keynotebrown;
+}
+
+.subsubtext {
+  font-size:     .70em;
+  color: $gray70;
+}
+
+.firebricktext {
+  color:        $firebrick;
+}
+
+.steelbluetext {
+  color:        $steelblue;
+}
+
+.forestgreentext {
+  color:        $forestgreen;
+}
+
+
+.defn {
+  font-size:     1em;
+  font-style: italic;
+  text-decoration: underline;
+  color:        $steelblue;
+}
+
+.emph {
+  font-size:     1em;
+  font-style: italic;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.source {
+  font-size:     .4em;
+  text-align: right;
+  // justify-content: bottom; 
+  bottom: 20px; // similar to aside
+}
+
+.insert {
+  background-color: white;
+  border-radius: 10px; 
+  padding: 0; // top right left bottom
+}
+
+
+// https://github.com/quarto-dev/quarto-cli/discussions/1386
+.v-center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+.quote-attribution {
+  text-align: right;
+  justify-content: top;
+  font-size: .80em;
+  color: gray;
+}
+
+
+/*-- scss:defaults --*/
+// https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius
+// see https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/formats/revealjs/quarto.scss
+
+// set base font size
+$presentation-font-size-root: 36px !default;
+
+// Base document colors
+// $body-bg: #181818;
+// $body-color: white;
+$link-color: $forestgreen;
+
+
+
+
+// Code blocks
+$body-color: #222 !default;
+$code-block-border-color: lighten($body-color, 60%) !default;
+
