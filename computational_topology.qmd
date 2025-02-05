@@ -1,0 +1,643 @@
+---
+title: "Computational Topology"
+subtitle: "An introduction"
+abstract: Introductory notes on computational topology
+author:
+  - name: Thomas Reinke
+    affiliation: 
+      - name: Baylor University
+        department: Statistical Science
+        city: Waco
+        state: TX
+        country: US
+        url: https://www.baylor.edu
+    email: thomas_reinke1@baylor.edu
+date: last-modified
+format: 
+  html: 
+    other-links:
+      - text: Edelsbrunner & Harer (2010)
+        href: https://www.maths.ed.ac.uk/~v1ranick/papers/edelcomp.pdf
+        icon: book
+    code-tools: 
+      source: false
+    page-layout: full
+    toc-expand: 2
+    anchor-sections: false
+theme: [materia, theme.scss]
+code-fold: show
+code-overflow: wrap
+highlight-style: a11y
+toc: true
+toc-depth: 5
+number-sections: false
+number-depth: 1
+callout-appearance: minimal
+lightbox: 
+  loop: true
+embed-resources: true
+license: "CC BY-NC"
+copyright: 
+  holder: Thomas Reinke
+  year: 2024
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, setup}
+#| include: false
+#| message: false
+library(knitr)
+library(tidyverse)
+library(conflicted)
+conflict_prefer("select", "dplyr")
+# set point size/type
+# opts_knit$set(global.par = TRUE)
+# par(pch = 20)
+theme_set(theme_minimal())
+knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 100), tidy = FALSE, fig.align = 'center')
+```
+
+# Resources {.unnumbered}
+
+-   [Wikipedia](https://en.wikipedia.org/wiki/Computational_topology)
+
+-   [Edelsbrunner Course](https://courses.cs.duke.edu//fall06/cps296.1/)
+
+-   [Hsien-Chih Chang Course &
+    Reference](https://hcsoso.github.io/teaching/topology-f20/index.html)
+
+    -   [Algorithms for Embedded
+        Graphs](http://monge.univ-mlv.fr/~colinde/cours/all-algo-embedded-graphs.pdf)
+
+    -   [Discrete Differential Geometry: An Applied
+        Introduction](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf)
+
+    -   [Elementary Applied
+        Topology](https://www.math.upenn.edu/~ghrist/notes.html)
+
+    -   [Algebraic
+        Topology](http://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
+
+    -   [Optimization Algorithms for Planar
+        Graphs](http://planarity.org/)
+
+    -   [Computational Topology: Lecture
+        Notes](http://monge.univ-mlv.fr/~demesma/FullLectureNotes.pdf)
+
+# [Computational Topology](https://www.maths.ed.ac.uk/~v1ranick/papers/edelcomp.pdf)
+
+## Part A
+
+### I Graphs
+
+#### Connected Components
+
+##### Simple graphs
+
+Graph
+
+:   An abstract *graph* is a pair $G = (V, E)$ consisting of a set of
+    *vertices*, $V$, and a set of *edges*, $E$, each pair of vertices.
+
+We can represent the vertices as points/circles and the edges with line
+segments or curves. Crossings of curves are allowed.
+
+Simple Graph
+
+:   A graph is *simple* if the edge set is a subset of the set of
+    unordered pairs, $E \subseteq {V\choose 2}$, which means that no two
+    edges connect the same two vertices and no edge joins a vertex to
+    itself.
+
+For $n = \text{card } V$ vertices, the number of edges is
+$m = \text{card } E \leq {n \choose 2}$. Every simple graph with $n$
+vertices is a subgraph of the *complete graph*, $K_n$, that contains an
+edge for every pair of vertices. See @fig-simplegraph below.
+
+```{dot}
+//| label: fig-simplegraph
+//| fig-cap: "The complete graph with five vertices, $K_5$. It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon. The four thick edges connect the same five vertices and form a spanning tree of the complete graph"
+//| fig-width: 2
+//| fig-height: 2
+//| fig-align: center
+strict graph G {
+  layout = neato
+  node [width = .1, height = .1, shape = circle, label = ""]
+  A -- B, C, D, E [penwidth = 1];
+  B -- C, D, E [penwidth = 1];
+  C -- D, E [penwidth = 1];
+  D -- E [penwidth = 1];
+  A -- B, C, D [penwidth = 3];
+  D -- E [penwidth = 3];
+}
+```
+
+In a simple graph, a *path* between vertices $u$ and $v$ can be
+described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$,
+with and edge between $u_i$ and $u_{i + 1}$ for each
+$0 \leq i \leq k - 1$. The *length* of this path is its number of edges,
+$k$. Vertices can repeat, so the path can backtrack or cross itself. The
+path is *simple* if the vertices in the sequence are distinct, so
+$u_i \neq u_j$ whenever $i \neq j$.
+
+Connectedness
+
+:   A simple graph is *connected* if $\exists$ a path between every pair
+    of vertices.
+
+A *(connected) component* is a maximal subgraph that is connected. The
+smallest connected graphs are the *trees*, which are characterized by
+having a unique simple path between every pair of vertices. Removing any
+one edge disconnects the tree. A *spanning tree* of $G = (V, E)$ is a
+tree $(V, T)$ with $T \subseteq  E$. It has the same vertex set as the
+graph and uses a minimal set of edges necessary to be connected. This
+requires that the graph is connected to begin with. Indeed, a graph is
+connected iff it has a spanning tree. An alternative characterization of
+a connected graph can be based on the impossibility to cut it in two.
+
+Separation
+
+:   A *separation* is a non-trivial partition of the vertices,
+    $V = U \, \dot \cup \, W$ with $U, W \neq \emptyset$, such that no
+    edge connects a vertex in $U$ with a vertex in $W$. A simple graph
+    is *connected* if it has no separation.
+
+##### Topological spaces
+
+Topologies have similarities to graphs, especially with an interest in
+concepts of connectedness. We will start with point sets, not specifying
+how near points are to another. It may be helpful to consider this an
+abstraction of Euclidean space, where neighborhoods are open balls
+around points. A *topology* on a point set $\mathbb{X}$ is a collection
+$\mathcal{U}$ of subsets of $\mathbb{X}$, called *open sets*, such that
+
+i)  $\mathbb{X}$ is open and the empty set $\emptyset$ is open
+
+ii) if $U_1$ and $U_2$ are open, then $U_1 \cap U_2$ is open
+
+iii) if $U_i$ is open $\forall i$ in some possibly infinite, possibly
+     uncountable, index set, then $\bigcup\limits_{i = 1}^n U_i$ is open
+
+The pair $(\mathbb{X}, \mathcal{U})$ is a *topological space*. Usually
+$\mathcal{U}$ is understood and we refer to $\mathbb{X}$ as a
+topological space. Since we can repeat the pairwise intersection,
+Condition (ii) is equivalent to requiring that common intersections of
+finitely many open sets are open.
+
+A *basis* of a topology on a point set $\mathbb{X}$ is a collection
+$\mathcal{B}$ of subsets of $\mathbb{X}$, called *basis elements*, such
+that each $x \in \mathbb{X}$ is contained in at least one
+$B \in \mathcal{B}$ and $x \in B_1 \cap B_2$ implies there is a third
+basis element with $x \in B_3 \subseteq B_1 \cap B_2$. The topology
+$\mathcal{U}$ *generated* by $\mathcal{B}$ consists of all sets
+$U \subseteq \mathbb{X}$ for which $x \in U$ implies there is a basis
+element $x \in B \subseteq U$. This topology can be constructed
+explicitly by taking all possible unions of all possible finite
+intersections of basis sets.
+
+An example of this is the real line, $\mathbb{X} = \mathbb{R}$, and let
+$\mathcal{B}$ be the collection of open intervals. This gives us the
+usual topology of the real line; note that the intersection of intervals
+$(-1/k, +1/k)$, for infinitely many integers $k \geq 1$, is the point,
+0. This is not an open set which illustrates the need for restriction on
+finite intersections.
+
+Often, we have sets inside of sets, $\mathbb{Y} \subseteq \mathbb{X}$,
+which we can borrow the topology of the latter for the former. If
+$\mathcal{U}$ is a topology of $\mathbb{X}$ then the collection of sets
+$\mathbb{Y} \cap U$, for $U \in \mathcal{U}$, is the *subspace topology*
+of $\mathbb{Y}$.
+
+As an example consider the closed interval
+$[0, 1] \subseteq \mathbb{R}$. We have seen that the open intervals form
+the basis for a topology of the real line. The intersections of open
+intervals with $[0, 1]$ form the basis of the subspace topology of the
+closed interval. Note that the interval $(1/2, 1]$ is considered an open
+set in $[0, 1]$, but isn’t open when considered as a set in
+$\mathbb {R}$.
+
+##### Continuity, paths and connectedness
+
+A function from one topological space to another is *continuous* if the
+preimage of every set is open. This is derived from the same concept of
+continuity in calculus. Consider a function
+$f: \mathbb{R} \rightarrow \mathbb{R}$ that maps $(-\infty, 0]$ to $0$
+and $(0, \infty)$ to $1$ is not continuous since
+$\forall \, 0 < \epsilon < 1$, $(-\epsilon, \epsilon)$ is open, but
+$f^{-1}((-\epsilon, \epsilon))$ is not.
+
+A *path* is a continuous function from the unit interval,
+$\gamma : [0, 1] \rightarrow \mathbb{X}$. It *connects* the point
+$\gamma(0)$ to the point $\gamma(1)$ in $\mathbb{X}$. Similar to paths
+in graphs, we allows for self-intersections, that is, values $s \neq t$
+in the unit interval for which $\gamma(s) = \gamma(t)$. If there are no
+self intersections, then the function is injective and the path is
+*simple*. We can adapt this definition to connectedness of topological
+spaces.
+
+Path-Connected
+
+:   A topological space is *path-connected* if every pair of points is
+    connected by a path.
+
+There is a counterpart of our second definition of connectedness. We
+formulate it with open sets and there is an equivalent formulation from
+*closed sets*, which are by definition, complements of open sets.
+
+Separation
+
+:   A *separation* of a topological space $\mathbb{X}$ is a partition
+    $\mathbb{X} = U \, \dot \cup \, W$ into two non-empty, open subsets.
+    A topological space is *connected* if there exists no separation.
+
+Connectedness is strictly weaker than path-connectedness, although for
+most spaces we will encounter they are the same. For example the comb
+with a single tooth deleted is connected, but not path-connected.
+
+::: callout-note
+See page 5 for full example
+:::
+
+##### Disjoint set systems
+
+Back to graphs & considering algorithmic question of connectedness. It
+is based on maintaining a disjoint set system. We will use the integers
+$1$ to $n$ as the names of vertices, storing each component of the graph
+as a subset of $[n] = \{1, 2,\ldots, n\}$. Adding edges one at a time
+and maintaining the systems of sets representing the components, we find
+that the graph is connected iff at the end, there is only one set left,
+$[n]$. Formulated as an abstract data type, we have two operations
+manipulating the system:
+
+-   FIND($i$): return the name of the set that contains $i$.
+
+-   UNION($i,j$): assuming $i$ and $j$ belong to different sets in the
+    system, replace the two sets by their union.
+
+We need the `find` operation to test whether $i$ and $j$ indeed belong
+to different sets. Each successful union operation reduces the number of
+sets in the system by one. Starting with $n$ singleton sets, it
+therefore takes $n-1$ union operations to get to a single set. Since
+trees connecting the $n$ vertices can be generated this way, we thus
+have a proof that every tree with $n$ vertices has $m = n - 1$ edges.
+
+A typical data structure implementation stores each set as a tree
+embedded in a linear array, $V[1..n]$. Each node in the tree is equipped
+with a pointer to its *parent*, except for the *root*, which has no
+parent; see @fig-two-disjoint-trees and
+@fig-two-disjoint-trees-as-linear-array2 below . Who is the parent of
+whom isn't important so long as the vertices are connected in a single
+tree. We can implement the `find` operation by traversing the tree
+upward until the root is reached, reporting the root as the name of the
+set.
+
+```{dot}
+//| label: fig-two-disjoint-trees
+//| fig-cap: "Two trees representing two disjoint sets"
+//| fig-width: 4
+//| fig-height: 4
+//| fig-align: center
+graph G {
+  layout = dot
+  node [fixedsize = true, width = .25, height = .25, shape = circle, style = filled, color = "pink"]
+  subgraph tree1 {
+  6 -- 7, 16;
+  7 -- 13, 12;
+  12 -- 11, 9;
+  11 -- 1;
+  1 -- 8;
+  9 -- 10;
+  }
+
+  subgraph tree2 {
+  15 -- 3;
+  3 -- 14, 2;
+  2 -- 4;
+  4 -- 5;
+  }
+}
+```
+
+```{dot}
+//| label: fig-two-disjoint-trees-as-linear-array2
+//| fig-cap: "storing the two trees in a linear array using an arbitrary ordering of the nodes."
+//| fig-width: 5
+//| fig-height: 5
+//| fig-align: center
+digraph BitConnections {
+    rankdir=TB;
+    node [fixedsize = true, shape=box, width=0.375, height=0.375, style=filled, fillcolor=lightpink, color=black, fontcolor=black, fixedsize=true];
+    nodesep=0.1;
+    ranksep=1.5;
+
+    // Nodes
+    1 [label="1"];
+    2 [label="2"];
+    3 [label="3"];
+    4 [label="4"];
+    5 [label="5"];
+    6 [label="6", fillcolor=white];
+    7 [label="7"];
+    8 [label="8"];
+    9 [label="9"];
+    10 [label="10"];
+    11 [label="11"];
+    12 [label="12"];
+    13 [label="13"];
+    14 [label="14"];
+    15 [label="15"];
+    16 [label="16", fillcolor=white];
+
+    // Arrange nodes in horizontal order
+    { rank=same; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; }
+
+    // Connections
+    1 -> 2 [color=transparent];
+    2 -> 3 [color=transparent];
+    3 -> 4 [color=transparent];
+    4 -> 5 [color=transparent];
+    5 -> 6 [color=transparent];
+    6 -> 7 [color=transparent];
+    7 -> 8 [color=transparent];
+    8 -> 9 [color=transparent];
+    9 -> 10 [color=transparent];
+    10 -> 11 [color=transparent];
+    11 -> 12 [color=transparent];
+    12 -> 13 [color=transparent];
+    13 -> 14 [color=transparent];
+    14 -> 15 [color=transparent];
+    15 -> 16 [color=transparent];
+
+    // Loops and cross-links
+    8:n -> 1 [arrowhead = empty, arrowsize = 1];
+    1:s -> 11 [arrowhead = empty, arrowsize = 1];
+    11:n -> 12 [arrowhead = empty, arrowsize = 1];
+    10:n -> 9 [arrowhead = empty, arrowsize = 1];
+    9:s -> 12 [arrowhead = empty, arrowsize = 1];
+    12:n -> 7 [arrowhead = empty, arrowsize = 1];
+    13:n -> 7 [arrowhead = empty, arrowsize = 1];
+    7:s -> 6 [arrowhead = empty, arrowsize = 1];
+    16:s -> 6 [arrowhead = empty, arrowsize = 1];
+    5:n -> 4 [arrowhead = empty, arrowsize = 1];
+    4:s -> 2 [arrowhead = empty, arrowsize = 1];
+    2:n -> 3 [arrowhead = empty, arrowsize = 1];
+    14:s -> 3 [arrowhead = empty, arrowsize = 1];
+    3:n -> 15 [arrowhead = empty, arrowsize = 1];
+}
+```
+
+```         
+int FIND(i)
+    if V[i].parent ≠ null then return Find(V[i].parent)
+                               else return i
+    endif
+```
+
+If $i$ is not the root, then we find the root recursively and finally
+return it. Otherwise, $i$ is returned as the root. We can then implement
+the `union` operation by linking one root to the other.
+
+```         
+void UNION(i, j)
+    x = FIND(i); y = FIND(j);
+    if x ≠ y then V[x].parent = y endif
+```
+
+After making sure the two sets are different, we assign one root as the
+parent of the other.
+
+##### Improving the running time
+
+This is not a very efficient method, especially for long paths that may
+be traversed repeatedly. We prevent this by always linking the smaller
+tree to the larger one.
+
+```         
+void UNION(i,j)
+    x = FIND(i); y = FIND(j);
+    if x ≠ y then if V[x].size > V[y].size then x ↔ y endif;
+                  V[x].parent = y
+    endif
+```
+
+Now a tree of $k$ nodes cannot have paths longer than $\log_2 k$ edges,
+since the size of the subtree grows by at least a factor of two each
+time we pass the parent. To improve the efficiency even more, we
+compress paths whenever we traverse them. We also assume that roots are
+identified by pointing to themselves.
+
+```         
+int FIND(i)
+    if V[i].parent ≠ i then
+        return V[i].parent = FIND(V[i].parent)
+    endif;
+    return i
+```
+
+If $i$ is not the root, then the function recursively finds the root,
+makes it the parent of $i$, reports the root, and exits. Otherwise, the
+function reports $i$ as the root and exits.
+
+In analyzing the algorithm, we are interested in the running-time for
+executing a sequence of $m$ union and find operations. Finding tight
+bounds is a difficult problem. For $n$ vertices, the running-time is
+never more than $O(m\alpha (n))$, where $\alpha(n)$ is the slow growing
+inverse of the [Ackermann
+function](https://en.wikipedia.org/wiki/Ackermann_function). Eventually,
+$\alpha(n)$ goes to infinity, but to reach even beyond five, we need an
+astronomically large number of vertices, larger than electrons in the
+universe. So for practical purposes, the algorithm takes constant
+average time per operation, but theoretically not true.
+
+#### Curves in the Plane
+
+Previously, paths were used to merge points into connected components.
+However, to consider connectivity beyond components, we will need
+different maps.
+
+##### Closed curves
+
+We will consider two types of (connected) curves, *paths* and *closed
+curves*. Recall that paths are continuous maps from $[0,1]$ to
+$\mathbb{X}$. Occasionally a closed curve will defined as a path where
+$0$ and $1$ are mapped to the same point. Usually, we define a closed
+curve to be a map from the unit circle,
+$\gamma : \mathbb{S}^1 \rightarrow \mathbb{X}$, where
+$\mathbb{S}^1 = \{x \in \mathbb{R} \, | \, \Vert x \Vert = 1\}$. This
+emphasizes the differences between in properties of the two topological
+spaces, since the interval and unit circle are different topological
+spaces. To be precise, two topological spaces are *homeomorphic* or
+*topologically equivalent* if there exists a continuous bijection from
+one space to the other whose inverse is also continuous. A map with
+these properties is a *homeomorphism*. Note that a homeomorphism between
+two spaces gives a bijection between their open sets. The unit interval
+and the unit circle are not homeomorphic. Removing a midpoint from the
+interval results in two components, whereas the circle will remain
+connected. This negates the existence of a bijection that is continuous
+in both directions.
+
+```{r}
+#| echo: false
+#| fig-cap:  "The shaded inside and the white outside of a simple closed curve in the plane."
+library(ggplot2)
+library(dplyr)
+
+library(ggplot2)
+
+# External blob shape
+external_blob <- data.frame(
+  x = c(0.2, 0.4, 0.6, 0.8, 0.7, 0.5, 0.3, 0.2),
+  y = c(0.5, 0.8, 0.8, 0.6, 0.4, 0.2, 0.3, 0.5),
+  group = 1
+)
+
+# Internal blobs
+internal_blob1 <- data.frame(
+  x = c(0.4, 0.45, 0.5, 0.45, 0.4),
+  y = c(0.6, 0.65, 0.6, 0.55, 0.6),
+  group = 2
+)
+
+internal_blob2 <- data.frame(
+  x = c(0.6, 0.65, 0.7, 0.65, 0.6),
+  y = c(0.4, 0.45, 0.4, 0.35, 0.4),
+  group = 3
+)
+
+internal_blob3 <- data.frame(
+  x = c(0.3, 0.35, 0.4, 0.35, 0.3),
+  y = c(0.35, 0.4, 0.35, 0.3, 0.35),
+  group = 4
+)
+
+# Combine all data
+all_shapes <- rbind(
+  external_blob,
+  internal_blob1,
+  internal_blob2,
+  internal_blob3
+)
+
+# Plot the figure
+ggplot(all_shapes, aes(x, y, group = group)) +
+  geom_polygon(aes(fill = as.factor(group)), color = "black", show.legend = FALSE) +
+  scale_fill_manual(values = c("pink", "white", "white", "white")) +
+  theme_void() +
+  coord_fixed()
+
+
+```
+
+#### Knots & Links
+
+#### Planar Graphs
+
+### II Surfaces
+
+#### Two-Dimensional Manifolds
+
+#### Searching a triangulation
+
+#### Self-Intersections
+
+#### Surface Simplification
+
+### III Complexes
+
+#### Simplical Complexes
+
+#### Convex Set Systems
+
+#### Delaunnay Complexes
+
+#### Alpha Complexes
+
+## Part B
+
+### IV Homology
+
+#### Homology Groups
+
+#### Matrix Reduction
+
+#### Relative Homology
+
+#### Exact Sequences
+
+### V Duality
+
+#### Cohomology
+
+#### Poincare Duality
+
+#### Intersection Theory
+
+#### Alexander Duality
+
+### VI Morse Functions
+
+#### Generic Smooth Functions
+
+#### Transversality
+
+#### Piecewise Linear Functions
+
+#### Reeb Graphs
+
+## Part C
+
+### VII Persistence
+
+#### Persistent Homology
+
+#### Efficient Implementations
+
+#### Extended Persistence
+
+#### Spectral Sequences
+
+### VIII Stability
+
+#### Times Series
+
+#### Stability Theorems
+
+#### Length of a Curve
+
+#### Bipartite Graph Matching
+
+### IX Applications
+
+#### Image Segmentation
+
+#### Elevation
+
+#### Gene Expression
+
+#### Local Homology for Plant Root Architecture
+
+## Part D
+
+### X Open Problems
+
+#### Complexity of Reidmeister Moves
+
+#### Shelling a 3-ball
+
+#### Geometric Realization of 2-manifolds
+
+#### Embedding in Three Dimensions
+
+#### Equipartion in Four Dimensions
+
+#### Running-time of Matrix Reduction
+
+#### Multi-parameter Persitence
+
+#### Unfolding PL Critical Points
+
+#### PL in the Limit
+
+#### Counting Halving Sets
