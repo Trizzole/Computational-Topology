@@ -120,14 +120,13 @@ li {
 // see https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/formats/revealjs/quarto.scss
 
 // set base font size
-$presentation-font-size-root: 36px !default;
+//$presentation-font-size-root: 36px !default;
+$presentation-font-size-root: 48px !default;
 
 // Base document colors
 // $body-bg: #181818;
 // $body-color: white;
 $link-color: $forestgreen;
-
-
 
 
 // Code blocks
