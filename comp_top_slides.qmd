@@ -352,7 +352,7 @@ $\mathbb {R}$
 - A function from one topological space to another is *continuous* if the preimage of every set is open
 :::
 
-:::{.fragment .subsubtext}
+:::{.fragment .subtext}
 - This is derived from the same concept of continuity in calculus
 :::
 
@@ -407,7 +407,9 @@ Path Connected
 ## Continuity, Paths, and Connectedness
 
 :::{.fragment .defn}
-A *separation* of a topological space $\mathbb{X}$ is a partition
+Separation
+
+: A *separation* of a topological space $\mathbb{X}$ is a partition
     $\mathbb{X} = U \, \dot \cup \, W$ into two non-empty, open subsets.
     A topological space is *connected* if there exists no separation.
 :::
@@ -415,6 +417,7 @@ A *separation* of a topological space $\mathbb{X}$ is a partition
 - Connectedness is strictly weaker than path-connectedness, although for
 most spaces we will encounter they are the same
 :::
+
 :::{.fragment .p}
 - For example the [comb](https://en.wikipedia.org/wiki/Comb_space) with a single tooth deleted is connected, but not path-connected
 :::
@@ -423,43 +426,79 @@ most spaces we will encounter they are the same
 
 ### Graphs & algorithmically determining connectedness
 
+:::{.fragment .p}
 - We will use the integers $1$ to $n$ as the names of vertices, storing each component of the graph as a subset of $[n] = \{1, 2,\ldots, n\}$
+:::
 
-- Adding edges one at a time and maintaining the systems of sets representing the components, we find that the graph is connected iff at the end, there is only one set left,
-$[n]$
+:::{.fragment .p}
+- Adding edges one at a time and maintaining the systems of sets representing the components, we find that the graph is connected iff at the end, there is only one set left, $[n]$
+:::
 
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment .p}
 - Formulated as an abstract data type, we have two operations
 manipulating the system:
+:::
 
-  1. FIND($i$): return the name of the set that contains $i$.
+:::{.fragment .subsubtext}
+1. FIND($i$): return the name of the set that contains $i$.
+:::
 
-  2. UNION($i,j$): assuming $i$ and $j$ belong to different sets in the
-    system, replace the two sets by their union.
+:::{.fragment .subsubtext}
+2. UNION($i,j$): assuming $i$ and $j$ belong to different sets in the system, replace the two sets by their union.
+:::
 
 ::: {.notes}
 Back to graphs & considering algorithmic question of connectedness. It is based on maintaining a disjoint set system.
 :::
 
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment .p}
 - We need the `find` operation to test whether $i$ and $j$ indeed belong to different sets
+:::
 
+:::{.fragment .p}
 - Each successful union operation reduces the number of sets in the system by one
+:::
 
+:::{.fragment .p}
 - Starting with $n$ singleton sets, it therefore takes $n-1$ union operations to get to a single set
+:::
 
+:::{.fragment .p}
 - Since trees connecting the $n$ vertices can be generated this way, we thus have a proof that every tree with $n$ vertices has $m = n - 1$ edges
+:::
 
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment .p}
 - A typical data structure implementation stores each set as a tree
 embedded in a linear array, $V[1..n]$
+:::
 
+:::{.fragment .p}
 - Each node in the tree is equipped
 with a pointer to its *parent*, except for the *root*, which has no
 parent
+:::
 
-+  Who is the parent of whom isn't important so long as the vertices are connected in a single tree
+:::{.fragment .subtext}
+-  Who is the parent of whom isn't important so long as the vertices are connected in a single tree
+:::
 
+:::{.fragment .p}
 - We can implement the `find` operation by traversing the tree
 upward until the root is reached, reporting the root as the name of the
 set
+:::
 
 ## Disjoint Set System
 
@@ -562,34 +601,49 @@ digraph BitConnections {
 
 ## Disjoint Set Systems
 
+:::{.fragment}
 ```         
 int FIND(i)
     if V[i].parent ≠ null then return Find(V[i].parent)
                           else return i
     endif
 ```
+:::
 
+:::{.fragment .p}
 - If $i$ is not the root, then we find the root recursively and finally
 return it, otherwise, $i$ is returned as the root
+:::
 
+:::{.fragment .p}
 - We can then implement the `union` operation by linking one root to the other
+:::
 
+:::{.fragment}
 ```         
 void UNION(i, j)
     x = FIND(i); y = FIND(j);
     if x ≠ y then V[x].parent = y endif
 ```
+:::
 
+:::{.fragment .p}
 - After making sure the two sets are different, we assign one root as the
 parent of the other
+:::
 
 ## Improving the running time
 
+:::{.fragment .p}
 - This is not a very efficient method, especially for long paths that may
 be traversed repeatedly
+:::
 
+:::{.fragment .p}
 - We prevent this by always linking the smaller tree to the larger one
+:::
 
+:::{.fragment}
 ```         
 void UNION(i,j)
     x = FIND(i); y = FIND(j);
@@ -598,17 +652,27 @@ void UNION(i,j)
       V[x].parent = y
     endif
 ```
+:::
 
+## Improving the running time
+
+:::{.fragment .p}
 - A tree of $k$ nodes cannot have paths longer than $\log_2 k$ edges,
 since the size of the subtree grows by at least a factor of two each
 time we pass the parent
+:::
 
+:::{.fragment .p}
 - To improve the efficiency even more, we compress paths whenever we traverse them
-    
+:::
+
+:::{.fragment .p}
 - We also assume that roots are identified by pointing to themselves
-    
+:::
+
 ## Improving the running time
 
+:::{.fragment}
 ```         
 int FIND(i)
     if V[i].parent ≠ i then
@@ -616,21 +680,32 @@ int FIND(i)
     endif;
     return i
 ```
+:::
 
+:::{.fragment .p}
 - If $i$ is not the root, then the function recursively finds the root,
 makes it the parent of $i$, reports the root, and exits; otherwise, the
 function reports $i$ as the root and exits
+:::
 
+:::{.fragment .subtext}
 - In analyzing the algorithm, we are interested in the running-time for
 executing a sequence of $m$ union and find operations; finding tight
 bounds is a difficult problem
+:::
 
+:::{.fragment .subtext}
 - For $n$ vertices, the running-time is never more than $O(m\alpha (n))$, where $\alpha(n)$ is the slow growing inverse of the [Ackermann function](https://en.wikipedia.org/wiki/Ackermann_function)
+:::
 
+:::{.fragment .subtext}
 - Eventually, $\alpha(n)$ goes to infinity, but to reach even beyond five, we need an astronomically large number of vertices, larger than electrons in the universe
+:::
 
+:::{.fragment .subtext}
 - For practical purposes, the algorithm takes constant average time per operation, but theoretically not true
-  
+:::
+
 # I.2 Graphs - Curves in the Plane {#sec-CurvesPlane}
 
 
