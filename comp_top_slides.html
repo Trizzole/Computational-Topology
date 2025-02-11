@@ -1299,25 +1299,22 @@ Thomas Reinke
 <div class="column" style="width:70%;">
 <div class="p fragment">
 <ul>
-<li><p>The complete graph with five vertices, <span class="math inline">\(K_5\)</span></p></li>
-<li><p>It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon</p></li>
-<li><p>The four thick edges connect the same five vertices and form a spanning tree of the complete graph</p></li>
+<li>The complete graph with five vertices, <span class="math inline">\(K_5\)</span></li>
+</ul>
+</div>
+<div class="p fragment">
+<ul>
+<li>It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon</li>
+</ul>
+</div>
+<div class="p fragment">
+<ul>
+<li>The four thick edges connect the same five vertices and form a spanning tree of the complete graph</li>
 </ul>
 </div>
 <div class="p fragment">
 <ul>
 <li>In a simple graph, a <em>path</em> between vertices <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> can be described by a sequence of vertices, <span class="math inline">\(u = u_0, u_1, \ldots , u_k = v\)</span>, with and edge between <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_{i + 1}\)</span> for each <span class="math inline">\(0 \leq i \leq k - 1\)</span></li>
-</ul>
-</div>
-<div class="p fragment">
-<ul>
-<li><p>The <em>length</em> of this path is its number of edges, <span class="math inline">\(k\)</span></p></li>
-<li><p>Vertices can repeat, so the path can backtrack or cross itself</p></li>
-</ul>
-</div>
-<div class="p fragment">
-<ul>
-<li>The path is <em>simple</em> if the vertices in the sequence are distinct, so <span class="math inline">\(u_i \neq u_j\)</span> whenever <span class="math inline">\(i \neq j\)</span></li>
 </ul>
 </div>
 </div><div class="column" style="width:30%;">
@@ -1412,10 +1409,127 @@ Thomas Reinke
 </div>
 </div>
 </div>
-</div><!-- ::: aside --><!-- spanning tree: a maximal acyclic set of edges or as a tree that contains --><!-- every vertex --><!-- ::: -->
-</div>
+</div></div>
 </section>
 <section id="simple-graphs-3" class="slide level2">
+<h2>Simple Graphs</h2>
+<div class="columns">
+<div class="column" style="width:70%;">
+<div class="p fragment">
+<ul>
+<li>The <em>length</em> of this path is its number of edges, <span class="math inline">\(k\)</span></li>
+</ul>
+</div>
+<div class="p fragment">
+<ul>
+<li>Vertices can repeat, so the path can backtrack or cross itself</li>
+</ul>
+</div>
+<div class="p fragment">
+<ul>
+<li>The path is <em>simple</em> if the vertices in the sequence are distinct, so <span class="math inline">\(u_i \neq u_j\)</span> whenever <span class="math inline">\(i \neq j\)</span></li>
+</ul>
+</div>
+<div class="p fragment defn">
+<ul>
+<li><a href="#/sec-ConnectedComponents-spanningtree">spanning tree</a>: a maximal acyclic set of edges or as a tree that contains every vertex</li>
+</ul>
+</div>
+</div><div class="column" style="width:30%;">
+<div class="cell" data-fig-width="2" data-fig-height="2" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class><p></p>
+<div>
+<svg width="192" height="192" viewbox="0.00 0.00 99.04 97.33" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 93.33)">
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-93.33 95.04,-93.33 95.04,4 -4,4"></polygon>
+<!-- A -->
+<g id="node1" class="node">
+<title>A</title>
+<ellipse fill="none" stroke="black" cx="3.5" cy="-37.84" rx="3.5" ry="3.5"></ellipse>
+</g>
+<!-- B -->
+<g id="node2" class="node">
+<title>B</title>
+<ellipse fill="none" stroke="black" cx="87.54" cy="-30.12" rx="3.5" ry="3.5"></ellipse>
+</g>
+<!-- A&#45;&#45;B -->
+<g id="edge1" class="edge">
+<title>A--B</title>
+<path fill="none" stroke="black" stroke-width="3" d="M7.11,-37.51C20.93,-36.24 70.4,-31.7 84.04,-30.44" />
+</g>
+<!-- C -->
+<g id="node3" class="node">
+<title>C</title>
+<ellipse fill="none" stroke="black" cx="42.63" cy="-3.5" rx="3.5" ry="3.5"></ellipse>
+</g>
+<!-- A&#45;&#45;C -->
+<g id="edge2" class="edge">
+<title>A--C</title>
+<path fill="none" stroke="black" stroke-width="3" d="M6.31,-35.37C13.47,-29.1 32.28,-12.58 39.63,-6.13" />
+</g>
+<!-- D -->
+<g id="node4" class="node">
+<title>D</title>
+<ellipse fill="none" stroke="black" cx="24.06" cy="-85.83" rx="3.5" ry="3.5"></ellipse>
+</g>
+<!-- A&#45;&#45;D -->
+<g id="edge3" class="edge">
+<title>A--D</title>
+<path fill="none" stroke="black" stroke-width="3" d="M4.98,-41.29C8.77,-50.15 18.82,-73.59 22.59,-82.41" />
+</g>
+<!-- E -->
+<g id="node5" class="node">
+<title>E</title>
+<ellipse fill="none" stroke="black" cx="75.83" cy="-80.8" rx="3.5" ry="3.5"></ellipse>
+</g>
+<!-- A&#45;&#45;E -->
+<g id="edge4" class="edge">
+<title>A--E</title>
+<path fill="none" stroke="black" d="M6.61,-39.69C18.51,-46.75 61.08,-72.04 72.81,-79.01" />
+</g>
+<!-- B&#45;&#45;C -->
+<g id="edge5" class="edge">
+<title>B--C</title>
+<path fill="none" stroke="black" d="M84.31,-28.21C76.02,-23.29 54.09,-10.29 45.84,-5.4" />
+</g>
+<!-- B&#45;&#45;D -->
+<g id="edge6" class="edge">
+<title>B--D</title>
+<path fill="none" stroke="black" d="M84.81,-32.51C74.37,-41.68 37.01,-74.46 26.71,-83.5" />
+</g>
+<!-- B&#45;&#45;E -->
+<g id="edge7" class="edge">
+<title>B--E</title>
+<path fill="none" stroke="black" d="M86.7,-33.76C84.54,-43.12 78.82,-67.87 76.66,-77.19" />
+</g>
+<!-- C&#45;&#45;D -->
+<g id="edge8" class="edge">
+<title>C--D</title>
+<path fill="none" stroke="black" d="M41.84,-7.04C38.78,-20.58 27.85,-69.03 24.83,-82.39" />
+</g>
+<!-- C&#45;&#45;E -->
+<g id="edge9" class="edge">
+<title>C--E</title>
+<path fill="none" stroke="black" d="M44.06,-6.82C49.52,-19.54 69.06,-65.03 74.45,-77.58" />
+</g>
+<!-- D&#45;&#45;E -->
+<g id="edge10" class="edge">
+<title>D--E</title>
+<path fill="none" stroke="black" stroke-width="3" d="M27.78,-85.46C37.33,-84.54 62.63,-82.08 72.14,-81.16" />
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="simple-graphs-4" class="slide level2">
 <h2>Simple Graphs</h2>
 <div class="defn fragment">
 <dl>
@@ -1441,7 +1555,7 @@ Thomas Reinke
 </ul>
 </div>
 </section>
-<section id="simple-graphs-4" class="slide level2">
+<section id="sec-ConnectedComponents-spanningtree" class="slide level2">
 <h2>Simple Graphs</h2>
 <div class="fragment defn">
 <dl>

@@ -63,9 +63,11 @@ $$
 ::: {.fragment}
 -   [Wikipedia](https://en.wikipedia.org/wiki/Computational_topology)
 :::
+
 ::: {.fragment}
 -   [Edelsbrunner Course](https://courses.cs.duke.edu//fall06/cps296.1/)
 :::
+
 ::::{.fragment}
 -   [Hsien-Chih Chang Course &
     Reference](https://hcsoso.github.io/teaching/topology-f20/index.html)
@@ -73,18 +75,23 @@ $$
 :::{.subtext}
 -   [Algorithms for Embedded Graphs](http://monge.univ-mlv.fr/~colinde/cours/all-algo-embedded-graphs.pdf)
 :::
+
 :::{.subtext}
 -   [Discrete Differential Geometry: An Applied         Introduction](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf)
 :::
+
 :::{.subtext}
 -   [Elementary Applied Topology](https://www.math.upenn.edu/~ghrist/notes.html)
 :::
+
 :::{.subtext}
 -   [Algebraic Topology](http://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
 :::
+
 :::{.subtext} 
 -   [Optimization Algorithms for Planar Graphs](http://planarity.org/)
 :::
+
 :::{.subtext}
 -   [Computational Topology: Lecture Notes](http://monge.univ-mlv.fr/~demesma/FullLectureNotes.pdf)
 :::
@@ -113,10 +120,12 @@ Graph
 :   An abstract *graph* is a pair $G = (V, E)$ consisting of a set of
     *vertices*, $V$, and a set of *edges*, $E$, each pair of vertices
 :::
+
 :::{.p .fragment}
 -   We can represent the vertices as points/circles and the edges with
     line segments or curves
 :::
+
 :::{.p .fragment}
 -   Crossings of curves are allowed
 :::
@@ -131,10 +140,12 @@ Simple Graph
     edges connect the same two vertices and no edge joins a vertex to
     itself
 :::
+
 :::{.p .fragment}
 -   For $n = \text{card } V$ vertices, the number of edges is
     $m = \text{card } E \leq {n \choose 2}$
 :::
+
 :::{.p .fragment}
 -   Every simple graph with $n$ vertices is a subgraph of the *complete graph*, $K_n$, that contains an edge for every pair of vertices
 :::
@@ -145,27 +156,59 @@ Simple Graph
 :::: {.column width="70%"}
 :::{.p .fragment}
 -   The complete graph with five vertices, $K_5$
-
--   It has ten edges which form five crossings if drawn as sides and
-    diagonals of a convex pentagon
-
--   The four thick edges connect the same five vertices and form a
-    spanning tree of the complete graph
 :::
+
 :::{.p .fragment}
--   In a simple graph, a *path* between vertices $u$ and $v$ can be
-    described by a sequence of vertices,
-    $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and
-    $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+-   It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon
 :::
+
+:::{.p .fragment}
+-   The four thick edges connect the same five vertices and form a spanning tree of the complete graph
+:::
+
+:::{.p .fragment}
+-   In a simple graph, a *path* between vertices $u$ and $v$ can be described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+:::
+::::
+
+:::: {.column width="30%"}
+```{dot}
+//| fig-width: 2
+//| fig-height: 2
+//| fig-align: center
+strict graph G {
+  layout = neato
+  node [width = .1, height = .1, shape = circle, label = ""]
+  A -- B, C, D, E [penwidth = 1];
+  B -- C, D, E [penwidth = 1];
+  C -- D, E [penwidth = 1];
+  D -- E [penwidth = 1];
+  A -- B, C, D [penwidth = 3];
+  D -- E [penwidth = 3];
+}
+```
+::::
+:::::
+
+## Simple Graphs
+
+::::: columns
+:::: {.column width="70%"}
 :::{.p .fragment}
 -   The *length* of this path is its number of edges, $k$
+:::
 
+:::{.p .fragment}
 -   Vertices can repeat, so the path can backtrack or cross itself
 :::
+
 :::{.p .fragment}
--   The path is *simple* if the vertices in the sequence are distinct,
-    so $u_i \neq u_j$ whenever $i \neq j$
+-   The path is *simple* if the vertices in the sequence are distinct, so $u_i \neq u_j$ whenever $i \neq j$
+:::
+
+:::{.p .fragment .defn}
+- [spanning tree](#sec-ConnectedComponents-spanningtree): a maximal acyclic set of edges or as a tree that contains
+every vertex
 :::
 ::::
 
@@ -187,10 +230,7 @@ strict graph G {
 ```
 ::::
 
-<!-- ::: aside -->
-<!-- spanning tree: a maximal acyclic set of edges or as a tree that contains -->
-<!-- every vertex -->
-<!-- ::: -->
+
 :::::
 
 ## Simple Graphs
@@ -201,19 +241,22 @@ Connectedness
 :   A simple graph is *connected* if $\exists$ a path between every pair
     of vertices
 :::
+
 :::{.p .fragment}
 -   A *(connected) component* is a maximal subgraph that is connected
 :::
+
 :::{.p .fragment}
 -   The smallest connected graphs are the *trees*, which are
     characterized by having a unique simple path between every pair of
     vertices
 :::
+
 :::{.p .fragment}
 -   Removing any one edge disconnects the tree
 :::
 
-## Simple Graphs
+## Simple Graphs {#sec-ConnectedComponents-spanningtree}
 
 :::{.fragment .defn}
 Spanning tree
@@ -221,16 +264,20 @@ Spanning tree
 :   A *spanning tree* of $G = (V, E)$ is a tree $(V, T)$ with
     $T \subseteq  E$
 :::
+
 :::{.p .fragment}
 -   It has the same vertex set as the graph and uses a minimal set of
     edges necessary to be connected
 :::
+
 :::{.p .fragment}
 -   This requires that the graph is connected to begin with
 :::
+
 :::{.p .fragment}
 -   A graph is connected iff it has a spanning tree
 :::
+
 :::{.p .fragment}
 -   An alternative characterization of a connected graph can be based on
     the impossibility to cut it in two
@@ -245,6 +292,7 @@ Separation
     $V = U \, \dot \cup \, W$ with $U, W \neq \emptyset$, such that no
     edge connects a vertex in $U$ with a vertex in $W$
 :::
+
 :::{.fragment .p}
 -   A simple graph is *connected* if it has no separation
 :::
@@ -257,12 +305,15 @@ Topology
 : A *topology* on a point set $\mathbb{X}$ is a collection $\mathcal{U}$
 of subsets of $\mathbb{X}$, called *open sets*, such that
 ::: 
+
 :::{.fragment .subtext}
 1.  $\mathbb{X}$ is open and the empty set $\emptyset$ is open
 :::
+
 :::{.fragment .subtext}
 2. if $U_1$ and $U_2$ are open, then $U_1 \cap U_2$ is open
 :::
+
 :::{.fragment .subtext}
 3. if $U_i$ is open $\forall i$ in some possibly infinite, possibly
      uncountable, index set, then $\bigcup\limits_{i = 1}^n U_i$ is open
@@ -273,15 +324,18 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 :::{.fragment .p}
 -   The pair $(\mathbb{X}, \mathcal{U})$ is a *topological space*
 :::
+
 :::{.fragment .p}
 -   Usually $\mathcal{U}$ is understood and we refer to $\mathbb{X}$ as
     a topological space
 :::
+
 :::{.fragment .p}
 -   Since we can repeat the pairwise intersection, condition 2 is
     equivalent to requiring that common intersections of finitely many
     open sets are open
 :::
+
 :::{.fragment .defn}
 -  A *basis* of a topology on a point set $\mathbb{X}$ is a collection
     $\mathcal{B}$ of subsets of $\mathbb{X}$, called *basis elements*,
@@ -289,11 +343,13 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
     $B \in \mathcal{B}$ and $x \in B_1 \cap B_2$ implies there is a
     third basis element with $x \in B_3 \subseteq B_1 \cap B_2$
 :::
+
 :::{.fragment .subtext}
 -   The topology $\mathcal{U}$ *generated* by $\mathcal{B}$ consists of
     all sets $U \subseteq \mathbb{X}$ for which $x \in U$ implies there
     is a basis element $x \in B \subseteq U$
 :::
+
 :::{.fragment .subtext}
 -   This topology can be constructed explicitly by taking all possible
     unions of all possible finite intersections of basis sets
@@ -307,20 +363,25 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 - Consider the real line, $\mathbb{X} = \mathbb{R}$, and let
 $\mathcal{B}$ be the collection of open intervals
 :::
+
 :::{.fragment .p}
 - This gives us the usual topology of the real line
 :::
+
 :::{.fragment .p}
 - Note that the intersection of intervals $(-1/k, +1/k)$, for infinitely many integers $k \geq 1$, is the point, 0
 :::
+
 :::{.fragment .p}
 - This is not an open set which illustrates the need for restriction on
 finite intersections
 :::
+
 :::{.fragment .p}
 - Often, we have sets inside of sets, $\mathbb{Y} \subseteq \mathbb{X}$,
 which we can borrow the topology of the latter for the former
 :::
+
 :::{.fragment .p}
 - If $\mathcal{U}$ is a topology of $\mathbb{X}$ then the collection of sets
 $\mathbb{Y} \cap U$, for $U \in \mathcal{U}$, is the *subspace topology*
@@ -334,12 +395,15 @@ of $\mathbb{Y}$
 :::{.fragment .p}
 - Consider the closed interval $[0, 1] \subseteq \mathbb{R}$
 :::
+
 :::{.fragment .p}
 - We have seen that the open intervals form the basis for a topology of the real line
 :::
+
 :::{.fragment .p}
 - The intersections of open intervals with $[0, 1]$ form the basis of the subspace topology of the closed interval
 :::
+
 :::{.fragment .subtext}
 - Note that the interval $(1/2, 1]$ is considered an open
 set in $[0, 1]$, but isn’t open when considered as a set in
@@ -396,9 +460,11 @@ Path Connected
 : A topological space is *path-connected* if every pair of points is
     connected by a path
 :::
+
 :::{.fragment .p}
 - There is a counterpart of our second definition of connectedness
 :::
+
 :::{.fragment .p}
 - We formulate it with open sets and there is an equivalent formulation from
 *closed sets*, which are by definition, complements of open sets
@@ -413,6 +479,7 @@ Separation
     $\mathbb{X} = U \, \dot \cup \, W$ into two non-empty, open subsets.
     A topological space is *connected* if there exists no separation.
 :::
+
 :::{.fragment .p}
 - Connectedness is strictly weaker than path-connectedness, although for
 most spaces we will encounter they are the same
