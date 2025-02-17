@@ -69,32 +69,31 @@ $$
 :::
 
 ::::{.fragment}
--   [Hsien-Chih Chang Course &
-    Reference](https://hcsoso.github.io/teaching/topology-f20/index.html)
+-   [Hsien-Chih Chang Course & Reference](https://hcsoso.github.io/teaching/topology-f20/index.html)
 
-:::{.subtext}
--   [Algorithms for Embedded Graphs](http://monge.univ-mlv.fr/~colinde/cours/all-algo-embedded-graphs.pdf)
-:::
-
-:::{.subtext}
--   [Discrete Differential Geometry: An Applied         Introduction](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf)
-:::
-
-:::{.subtext}
--   [Elementary Applied Topology](https://www.math.upenn.edu/~ghrist/notes.html)
-:::
-
-:::{.subtext}
--   [Algebraic Topology](http://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
-:::
-
-:::{.subtext} 
--   [Optimization Algorithms for Planar Graphs](http://planarity.org/)
-:::
-
-:::{.subtext}
--   [Computational Topology: Lecture Notes](http://monge.univ-mlv.fr/~demesma/FullLectureNotes.pdf)
-:::
+    :::{.subtext}
+    -   [Algorithms for Embedded Graphs](http://monge.univ-mlv.fr/~colinde/cours/all-algo-embedded-graphs.pdf)
+    :::
+    
+    :::{.subtext}
+    -   [Discrete Differential Geometry: An Applied Introduction](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf)
+    :::
+    
+    :::{.subtext}
+    -   [Elementary Applied Topology](https://www.math.upenn.edu/~ghrist/notes.html)
+    :::
+    
+    :::{.subtext}
+    -   [Algebraic Topology](http://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
+    :::
+    
+    :::{.subtext} 
+    -   [Optimization Algorithms for Planar Graphs](http://planarity.org/)
+    :::
+    
+    :::{.subtext}
+    -   [Computational Topology: Lecture Notes](http://monge.univ-mlv.fr/~demesma/FullLectureNotes.pdf)
+    :::
 
 ::::
 
