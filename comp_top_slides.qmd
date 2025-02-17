@@ -7,7 +7,7 @@ format:
     smaller: false
     scrollable: false
     show-slide-number: all
-    toc: true
+    toc: false
     toc-depth: 1
     preview-links: true
     slide-number: h.v
