@@ -28,17 +28,25 @@ p {
 }
 
 ul {
-  font-size: .75em;
+  font-size: .95em;
 }
 
 li {
-  font-size: .75em;
+  font-size: .95em;
 }
 
 .cell {
   font-size:     1em;
   margin-left:   8px;
   margin-right:  8px;
+  margin-top:    8px;
+  margin-bottom: 8px;
+}
+
+.smallertitle {
+  font-size: .6em;
+  margin-left:   1px;
+  margin-right:  1px;
   margin-top:    8px;
   margin-bottom: 8px;
 }
@@ -74,7 +82,7 @@ li {
 .defn {
   font-size:     1em;
   font-style: italic;
-  text-decoration: underline;
+//  text-decoration: underline;
   color:        $steelblue;
 }
 
@@ -122,6 +130,15 @@ li {
 // set base font size
 //$presentation-font-size-root: 36px !default;
 $presentation-font-size-root: 48px !default;
+$presentation-font-smaller: .8 !important default;
+
+$presentation-h1-font-size: 2.5em !default;
+$presentation-h2-font-size: 1.6em !default;
+$presentation-h3-font-size: 1.3em !default;
+$presentation-h4-font-size: 1em !default;
+
+// margins
+$presentation-block-margin: 10px !default;
 
 // Base document colors
 // $body-bg: #181818;

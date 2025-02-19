@@ -71,27 +71,27 @@ $$
 ::::{.fragment}
 -   [Hsien-Chih Chang Course & Reference](https://hcsoso.github.io/teaching/topology-f20/index.html)
 
-    :::{.subtext}
+    :::{.subsubtext}
     -   [Algorithms for Embedded Graphs](http://monge.univ-mlv.fr/~colinde/cours/all-algo-embedded-graphs.pdf)
     :::
     
-    :::{.subtext}
+    :::{.subsubtext}
     -   [Discrete Differential Geometry: An Applied Introduction](https://www.cs.cmu.edu/~kmcrane/Projects/DDG/paper.pdf)
     :::
     
-    :::{.subtext}
+    :::{.subsubtext}
     -   [Elementary Applied Topology](https://www.math.upenn.edu/~ghrist/notes.html)
     :::
     
-    :::{.subtext}
+    :::{.subsubtext}
     -   [Algebraic Topology](http://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
     :::
     
-    :::{.subtext} 
+    :::{.subsubtext} 
     -   [Optimization Algorithms for Planar Graphs](http://planarity.org/)
     :::
     
-    :::{.subtext}
+    :::{.subsubtext}
     -   [Computational Topology: Lecture Notes](http://monge.univ-mlv.fr/~demesma/FullLectureNotes.pdf)
     :::
 
@@ -99,7 +99,7 @@ $$
 
 # I Graphs
 
-:::{.p}
+:::{}
 -   [Connected Components](#sec-ConnectedComponents)
 
 -   [Curves in the Plane](#sec-CurvesPlane)
@@ -109,68 +109,135 @@ $$
 -   [Planar Graphs](#sec-PlanarGraphs)
 :::
 
-# I.1 Graphs - Connected Components {#sec-ConnectedComponents}
+# [I.1 Graphs - Connected Components]{.smallertitle} {#sec-ConnectedComponents} 
 
 ## Simple Graphs
 
 :::{.defn .fragment}
-Graph
-
-:   An abstract *graph* is a pair $G = (V, E)$ consisting of a set of
+- An abstract **graph** is a pair $G = (V, E)$ consisting of a set of
     *vertices*, $V$, and a set of *edges*, $E$, each pair of vertices
 :::
 
-:::{.p .fragment}
--   We can represent the vertices as points/circles and the edges with
-    line segments or curves
+:::{.fragment}
+- Represent vertices as points/circles
 :::
 
-:::{.p .fragment}
+:::{.fragment}
+- Edges as line segments/curves
+:::
+
+:::{.fragment}
+- Edges allowed to intersect
+:::
+
+:::{.notes}
+-   We can represent the vertices as points/circles and the edges with
+    line segments or curves
 -   Crossings of curves are allowed
 :::
 
 ## Simple Graphs
 
-:::{.defn .fragment}
-Simple Graph
+::::: columns
+::::{.column width="75%"}
+:::{.fragment .defn}
+- A subgraph of a graph $G = (V, E)$ is another graph $H = (U, F)$ formed from a subset of the vertices and edges of G
+:::
 
-:   A graph is *simple* if the edge set is a subset of the set of
-    unordered pairs, $E \subseteq {V\choose 2}$, which means that no two
+:::{.fragment}
+- $U \subseteq V$ and $F \subseteq E$
+:::
+::::
+
+::::{.column width="25%"}
+:::{.fragment}
+```{dot}
+//| fig-width: 2
+//| fig-height: 2
+//| fig-align: center
+strict graph G {
+  layout = circo
+  node [width = .1, height = .1, shape = circle, label = "\N"]
+  edge [penwidth = 1]
+  A -- B, C, D, E;
+  B -- C, D, E;
+  C -- D, E;
+  D -- E;
+}
+```
+:::
+
+:::{.fragment}
+```{dot}
+//| fig-width: 2
+//| fig-height: 2
+//| fig-align: center
+strict graph G {
+  layout = circo
+  node [width = .1, height = .1, shape = circle, label = "\N"]
+  edge [penwidth = 1]
+  A -- C, D;
+  B -- C, D;
+}
+```
+:::
+::::
+:::::
+
+:::{.notes}
+- The vertex subset must include all endpoints of the edge subset, but may also include additional vertices
+- A spanning subgraph is one that includes all vertices of the graph; an induced subgraph is one that includes all the edges whose endpoints belong to the vertex subset.
+:::
+
+
+## Simple Graphs
+
+:::{.defn .fragment}
+- A graph is **simple** if the edge set is a subset of the set of
+    unordered pairs, $E \subseteq V \times V$, which means that no two
     edges connect the same two vertices and no edge joins a vertex to
     itself
 :::
 
-:::{.p .fragment}
--   For $n = \text{card } V$ vertices, the number of edges is
-    $m = \text{card } E \leq {n \choose 2}$
+:::{.fragment}
+- For $n$ vertices, there will be $m \leq {n \choose 2}$ edges
 :::
 
-:::{.p .fragment}
+::::{.fragment}
+- $K_n$ denotes a *complete graph*
+
+    - [Each pair of vertices has an edge]{.subtext .fragment}
+    
+::::
+
+:::{.notes}
+-   For $n = \text{card } V$ vertices, the number of edges is
+    $m = \text{card } E \leq {n \choose 2}$
 -   Every simple graph with $n$ vertices is a subgraph of the *complete graph*, $K_n$, that contains an edge for every pair of vertices
 :::
 
 ## Simple Graphs
 
 ::::: columns
-:::: {.column width="70%"}
-:::{.p .fragment}
--   The complete graph with five vertices, $K_5$
+:::: {.column width="80%"}
+:::{.fragment}
+-   The complete graph $K_5$
+:::
+:::{.fragment}
+- 10 edges, 5 crossings
 :::
 
-:::{.p .fragment}
+:::{.fragment}
+- Red edges form a *spanning tree*
+:::
+
+:::{.notes}
 -   It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon
-:::
-
-:::{.p .fragment}
--   The four thick edges connect the same five vertices and form a spanning tree of the complete graph
-:::
-
-:::{.p .fragment}
--   In a simple graph, a *path* between vertices $u$ and $v$ can be described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+-   The four red edges connect the same five vertices and form a spanning tree of the complete graph
 :::
 ::::
 
-:::: {.column width="30%"}
+:::: {.column width="20%" .fragment}
 ```{dot}
 //| fig-width: 2
 //| fig-height: 2
@@ -182,8 +249,8 @@ strict graph G {
   B -- C, D, E [penwidth = 1];
   C -- D, E [penwidth = 1];
   D -- E [penwidth = 1];
-  A -- B, C, D [penwidth = 3];
-  D -- E [penwidth = 3];
+  A -- B, C, D [penwidth = 3, color = "red"];
+  D -- E [penwidth = 3, color = "red"];
 }
 ```
 ::::
@@ -192,26 +259,27 @@ strict graph G {
 ## Simple Graphs
 
 ::::: columns
-:::: {.column width="70%"}
-:::{.p .fragment}
+:::: {.column width="80%"}
+
+:::{.fragment .defn}
+- A **path** between vertices $u$ and $v$ can be described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+:::
+
+:::{.fragment .subtext}
 -   The *length* of this path is its number of edges, $k$
 :::
 
-:::{.p .fragment}
+:::{.fragment .subtext}
+-   Path is *simple* if the vertices in the sequence are distinct, so $u_i \neq u_j$ whenever $i \neq j$
+:::
+
+:::{.notes}
 -   Vertices can repeat, so the path can backtrack or cross itself
 :::
 
-:::{.p .fragment}
--   The path is *simple* if the vertices in the sequence are distinct, so $u_i \neq u_j$ whenever $i \neq j$
-:::
-
-:::{.p .fragment .defn}
-- [spanning tree](#sec-ConnectedComponents-spanningtree): a maximal acyclic set of edges or as a tree that contains
-every vertex
-:::
 ::::
 
-:::: {.column width="30%"}
+:::: {.column width="20%"}
 ```{dot}
 //| fig-width: 2
 //| fig-height: 2
@@ -223,61 +291,93 @@ strict graph G {
   B -- C, D, E [penwidth = 1];
   C -- D, E [penwidth = 1];
   D -- E [penwidth = 1];
-  A -- B, C, D [penwidth = 3];
-  D -- E [penwidth = 3];
+  A -- B, C, D [penwidth = 3, color = "red"];
+  D -- E [penwidth = 3, color = "red"];
 }
 ```
 ::::
-
 
 :::::
 
 ## Simple Graphs
 
 :::{.defn .fragment}
-Connectedness
-
-:   A simple graph is *connected* if $\exists$ a path between every pair
+-   A simple graph is **connected** if $\exists$ a path between every pair
     of vertices
 :::
 
-:::{.p .fragment}
--   A *(connected) component* is a maximal subgraph that is connected
+:::{.fragment .defn}
+- A **tree** is any graph which any two vertices are connected by exactly one path
 :::
 
-:::{.p .fragment}
+:::{.fragment .subtext}
+-   The smallest connected graphs are *trees*
+:::
+
+:::{.fragment .subtext}
+-   Removing any edge disconnects the tree
+:::
+
+:::{.notes}
+-   A *(connected) component* is a maximal subgraph that is connected
 -   The smallest connected graphs are the *trees*, which are
     characterized by having a unique simple path between every pair of
     vertices
 :::
 
-:::{.p .fragment}
--   Removing any one edge disconnects the tree
-:::
+## Simple Graphs
 
-## Simple Graphs {#sec-ConnectedComponents-spanningtree}
+::::: columns
+::::{.column width="50%"}
+```{dot}
+//| fig-width: 4
+//| fig-height: 4
+//| fig-align: center
+strict graph G {
+  layout = dot
+  node [width = .1, height = .1, shape = circle, label = "\N"]
+  1 -- 2, 3;
+  2 -- 4, 5;
+  3 -- 6, 7;
+}
+```
+::::
+
+::::{.column width="50%" .fragment}
+```{dot}
+//| fig-width: 4
+//| fig-height: 4
+//| fig-align: center
+strict graph H {
+  layout = dot
+  node [width = .1, height = .1, shape = circle, label = "\N"]
+  1 -- 2;
+  2 -- 4, 5;
+  3 -- 6, 7;
+}
+```
+::::
+:::::
+
+## Simple Graphs 
 
 :::{.fragment .defn}
-Spanning tree
-
-:   A *spanning tree* of $G = (V, E)$ is a tree $(V, T)$ with
-    $T \subseteq  E$
+-   A **spanning tree** of $G = (V, E)$ is a tree $T=(V, U)$ that includes all of the vertices of $G$
 :::
 
-:::{.p .fragment}
+:::{.fragment}
+- $G$ must be connected
+:::
+
+:::{.fragment}
+- $G$ is connected iff it has a spanning tree
+:::
+
+:::{.notes}
+- $U \subseteq  E$
 -   It has the same vertex set as the graph and uses a minimal set of
     edges necessary to be connected
-:::
-
-:::{.p .fragment}
--   This requires that the graph is connected to begin with
-:::
-
-:::{.p .fragment}
--   A graph is connected iff it has a spanning tree
-:::
-
-:::{.p .fragment}
+-   Multiple spanning trees may exists for a $G$
 -   An alternative characterization of a connected graph can be based on
     the impossibility to cut it in two
 :::
@@ -285,23 +385,19 @@ Spanning tree
 ## Simple Graphs
 
 :::{.fragment .defn}
-Separation
-
-:   A *separation* is a non-trivial partition of the vertices,
+-  A **separation** is a non-trivial partition of the vertices,
     $V = U \, \dot \cup \, W$ with $U, W \neq \emptyset$, such that no
     edge connects a vertex in $U$ with a vertex in $W$
 :::
 
-:::{.fragment .p}
+:::{.fragment}
 -   A simple graph is *connected* if it has no separation
 :::
 
 ## Topological Spaces
 
 :::{.fragment .defn}
-Topology
-
-: A *topology* on a point set $\mathbb{X}$ is a collection $\mathcal{U}$
+A **topology** on a point set $\mathbb{X}$ is a collection $\mathcal{U}$
 of subsets of $\mathbb{X}$, called *open sets*, such that
 ::: 
 
@@ -315,41 +411,72 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 
 :::{.fragment .subtext}
 3. if $U_i$ is open $\forall i$ in some possibly infinite, possibly
-     uncountable, index set, then $\bigcup\limits_{i = 1}^n U_i$ is open
+     uncountable, index set, then $\bigcup\limits_{i\in I} U_i$ is open
+:::
+
+:::{.fragment .subsubtext}
+$I$ is an indexing set
 :::
 
 ## Topological Spaces
 
-:::{.fragment .p}
+:::{.fragment}
 -   The pair $(\mathbb{X}, \mathcal{U})$ is a *topological space*
 :::
 
-:::{.fragment .p}
--   Usually $\mathcal{U}$ is understood and we refer to $\mathbb{X}$ as
+:::{.fragment}
+-   Usually $\mathcal{U}$ is understood, we refer to $\mathbb{X}$ as
     a topological space
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+- Condition 2 becomes finite intersection
+
+$$
+\bigcap_{i = 1}^n U_i \in \mathcal U
+$$
+:::
+
+
+:::{.notes}
 -   Since we can repeat the pairwise intersection, condition 2 is
     equivalent to requiring that common intersections of finitely many
     open sets are open
 :::
 
+## Topological Spaces
+
 :::{.fragment .defn}
--  A *basis* of a topology on a point set $\mathbb{X}$ is a collection
+-  A **basis** of a topology on a point set $\mathbb{X}$ is a collection
     $\mathcal{B}$ of subsets of $\mathbb{X}$, called *basis elements*,
-    such that each $x \in \mathbb{X}$ is contained in at least one
-    $B \in \mathcal{B}$ and $x \in B_1 \cap B_2$ implies there is a
-    third basis element with $x \in B_3 \subseteq B_1 \cap B_2$
+    such that
 :::
 
 :::{.fragment .subtext}
+- each $x \in \mathbb{X}$ is contained in at least one
+    $B \in \mathcal{B}$ 
+:::
+
+:::{.fragment .subtext}
+- $x \in B_1 \cap B_2 \implies \exists \, x \in B_3 \subseteq B_1 \cap B_2$
+:::
+
+:::{.fragment .subsubtext}
+- The $\mathcal{U}$ *generated* by $\mathcal{B}$ is all sets $U \subseteq \mathbb{X}$ which $x \in U \implies \exists$ a basis element $x \in B \subseteq U$
+:::
+
+:::{.fragment .subsubtext}
+
+- $\mathcal{T} = \left\{ \bigcup_{j \in J} \bigcap_{i \in I_j} B_i \mid B_i \in \mathcal{B} \right\}$
+
+- $I_j \text{ is finite}, J \text{ is arbitrary}$
+
+:::
+
+:::{.notes}
 -   The topology $\mathcal{U}$ *generated* by $\mathcal{B}$ consists of
     all sets $U \subseteq \mathbb{X}$ for which $x \in U$ implies there
     is a basis element $x \in B \subseteq U$
-:::
-
-:::{.fragment .subtext}
 -   This topology can be constructed explicitly by taking all possible
     unions of all possible finite intersections of basis sets
 :::
@@ -358,30 +485,68 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 
 ### Why only finite intersection?
 
-:::{.fragment .p}
-- Consider the real line, $\mathbb{X} = \mathbb{R}$, and let
-$\mathcal{B}$ be the collection of open intervals
+:::{.fragment}
+- consider $\mathbb{X} = \mathbb{R}$
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+- $\mathcal{B}$ be the collection of open intervals
+:::
+
+:::{.fragment}
+- This gives usual topology of the real line
+:::
+
+:::{.notes}
+- Consider the real line, $\mathbb{X} = \mathbb{R}$, and let
+$\mathcal{B}$ be the collection of open intervals
 - This gives us the usual topology of the real line
 :::
 
-:::{.fragment .p}
-- Note that the intersection of intervals $(-1/k, +1/k)$, for infinitely many integers $k \geq 1$, is the point, 0
+## Topological Spaces
+
+### Why only finite intersection?
+
+:::{.fragment}
+- Consider the intervals $\mathscr I = \{ (-1/k, +1/k) | k \in \mathbb{Z}^{+} \}$
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+
+$$
+\bigcap_{i \in \mathbb Z^+} \mathscr I_i = \{0\}
+$$
+:::
+
+:::{.fragment}
+- Since $\{0\}$ is not open, we need to restrict to finite intersection
+:::
+
+
+
+:::{.notes}
+- Note that the intersection of intervals $(-1/k, +1/k)$, for infinitely many integers $k \geq 1$, is the point, 0
 - This is not an open set which illustrates the need for restriction on
 finite intersections
 :::
 
-:::{.fragment .p}
-- Often, we have sets inside of sets, $\mathbb{Y} \subseteq \mathbb{X}$,
-which we can borrow the topology of the latter for the former
+## Topological Spaces
+
+:::{.fragment}
+- Consider $\mathbb{Y} \subseteq \mathbb{X}$
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+- Let $\mathcal U$ be topology on $\mathbb X$
+:::
+
+:::{.fragment .defn}
+- The **subspace topology** of $\mathbb{Y}$ is the collection $\mathbb{Y} \cap U$ for $U \in \mathcal{U}$
+:::
+
+:::{.notes}
+- Often, we have sets inside of sets, $\mathbb{Y} \subseteq \mathbb{X}$,
+which we can borrow the topology of the latter for the former
 - If $\mathcal{U}$ is a topology of $\mathbb{X}$ then the collection of sets
 $\mathbb{Y} \cap U$, for $U \in \mathcal{U}$, is the *subspace topology*
 of $\mathbb{Y}$
@@ -391,19 +556,29 @@ of $\mathbb{Y}$
 
 ### Subspace example
 
-:::{.fragment .p}
-- Consider the closed interval $[0, 1] \subseteq \mathbb{R}$
+:::{.fragment}
+- Consider $[0, 1] \subseteq \mathbb{R}$
 :::
 
-:::{.fragment .p}
-- We have seen that the open intervals form the basis for a topology of the real line
+:::{.fragment}
+- Know open intervals form basis for topology of $\mathbb R$
 :::
 
-:::{.fragment .p}
-- The intersections of open intervals with $[0, 1]$ form the basis of the subspace topology of the closed interval
+:::{.fragment}
+- Intersections $(a, b) \cap [0, 1]$ form basis of subspace topology of the closed interval
 :::
 
 :::{.fragment .subtext}
+- Note: $(1/2, 1]$ open in subspace but not original topology
+:::
+
+:::{.notes}
+- Consider the closed interval $[0, 1] \subseteq \mathbb{R}$
+
+- We have seen that the open intervals form the basis for a topology of the real line
+
+- The intersections of open intervals with $[0, 1]$ form the basis of the subspace topology of the closed interval
+
 - Note that the interval $(1/2, 1]$ is considered an open
 set in $[0, 1]$, but isn’t open when considered as a set in
 $\mathbb {R}$
@@ -411,60 +586,74 @@ $\mathbb {R}$
 
 ## Continuity, Paths, and Connectedness
 
-:::{.fragment .p}
-- A function from one topological space to another is *continuous* if the preimage of every set is open
+:::{.fragment .defn}
+- A function from one topological space to another is **continuous** if the preimage of every set is open
 :::
 
-:::{.fragment .subtext}
-- This is derived from the same concept of continuity in calculus
+:::{.fragment}
+- Derived from concept of continuity in calculus
 :::
 
-:::{.fragment .p}
+## Continuity, Paths, and Connectedness
+
+:::{.fragment}
+- Let $f: \mathbb{R} \rightarrow \mathbb{R}$
+:::
+
+:::{.fragment}
+- $f(x) = \begin{cases} 0 & x \in (-\infty, 0] \\ 1 & x \in (0, \infty) \end{cases}$
+:::
+
+:::{.fragment}
+- $\forall \, 0 < \epsilon < 1, \, (-\epsilon, \epsilon)$ is open
+:::
+
+:::{.fragment}
+- $f^{-1}((-\epsilon, \epsilon))$ is not
+:::
+
+:::{.notes}
 - Consider a function $f: \mathbb{R} \rightarrow \mathbb{R}$ that maps $(-\infty, 0]$ to $0$ and $(0, \infty)$ to $1$ is not continuous since
 $\forall \, 0 < \epsilon < 1$, $(-\epsilon, \epsilon)$ is open, but
 $f^{-1}((-\epsilon, \epsilon))$ is not
+
+- $f^{-1}((-\epsilon, \epsilon)) = \{x \in \mathbb R | f(x) \in (-\epsilon, \epsilon) \}$
 :::
 
-:::{.fragment .defn}
-Path
+## Continuity, Paths, and Connectedness
 
-: A *path* is a continuous function from the unit interval,
+:::{.fragment .defn}
+- A **path** is a continuous function from the unit interval,
 $\gamma : [0, 1] \rightarrow \mathbb{X}$
 :::
 
-## Continuity, Paths, and Connectedness
-
-:::{.fragment .p}
+:::{.fragment .subtext}
 - It *connects* the point $\gamma(0)$ to the point $\gamma(1)$ in $\mathbb{X}$
 :::
 
-:::{.fragment .p}
-- Similar to paths in graphs, we allows for self-intersections, that is, values $s \neq t$ in the unit interval for which $\gamma(s) = \gamma(t)$
+:::{.fragment .subtext}
+- Similar to paths in graphs, self-intersections allowed, $s \neq t$ where $\gamma(s) = \gamma(t)$
 :::
 
-:::{.fragment .p}
-- If there are no self intersections, then the function is injective and the path is *simple*
-:::
-
-:::{.fragment .p}
-- We can adapt this definition to connectedness of topological
-spaces
+:::{.fragment .subtext}
+- If no self intersections, then $\gamma$ is injective, and *simple*
 :::
 
 ## Continuity, Paths, and Connectedness
 
-:::{.fragment .defn}
-Path Connected
+:::{.fragment}
+- Adapt  definition to connectedness of topological
+spaces
+:::
 
-: A topological space is *path-connected* if every pair of points is
+:::{.fragment .defn}
+- A topological space is **path-connected** if every pair of points is
     connected by a path
 :::
 
-:::{.fragment .p}
+:::{.notes}
 - There is a counterpart of our second definition of connectedness
-:::
 
-:::{.fragment .p}
 - We formulate it with open sets and there is an equivalent formulation from
 *closed sets*, which are by definition, complements of open sets
 :::
@@ -472,98 +661,148 @@ Path Connected
 ## Continuity, Paths, and Connectedness
 
 :::{.fragment .defn}
-Separation
-
-: A *separation* of a topological space $\mathbb{X}$ is a partition
+- A **separation** of a topological space $\mathbb{X}$ is a partition
     $\mathbb{X} = U \, \dot \cup \, W$ into two non-empty, open subsets.
-    A topological space is *connected* if there exists no separation.
 :::
 
-:::{.fragment .p}
+:::{.fragment .defn}
+- A topological space is **connected** if there exists no separation.
+:::
+
+:::{.fragment .subtext}
+- Connectedness strictly weaker than path-connectedness
+:::
+
+:::{.fragment .subtext}
+- For example the [comb](https://en.wikipedia.org/wiki/Comb_space) with a single tooth deleted is connected, but not path-connected
+:::
+
+:::{.notes}
 - Connectedness is strictly weaker than path-connectedness, although for
 most spaces we will encounter they are the same
 :::
 
-:::{.fragment .p}
-- For example the [comb](https://en.wikipedia.org/wiki/Comb_space) with a single tooth deleted is connected, but not path-connected
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment}
+- Name vertices $1, \ldots, n$
+:::
+
+:::{.fragment}
+- Store *components* that are subsets of $[n] = \{1, 2,\ldots, n\}$
+:::
+
+:::{.fragment .defn}
+- A **component** of an graph is a connected subgraph that is not part of any larger connected subgraph.
+:::
+
+:::{.notes}
+- We will use the integers $1$ to $n$ as the names of vertices, storing each component of the graph as a subset of $[n] = \{1, 2,\ldots, n\}$
+-   A *(connected) component* is a maximal subgraph that is connected
 :::
 
 ## Disjoint Set Systems
 
 ### Graphs & algorithmically determining connectedness
 
-:::{.fragment .p}
-- We will use the integers $1$ to $n$ as the names of vertices, storing each component of the graph as a subset of $[n] = \{1, 2,\ldots, n\}$
+:::{.fragment}
+- Add one edge at a time
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+- The graph is connected iff at the end, there is only one set left, $[n]$
+:::
+
+:::{.notes}
 - Adding edges one at a time and maintaining the systems of sets representing the components, we find that the graph is connected iff at the end, there is only one set left, $[n]$
 :::
 
-## Disjoint Set Systems
+## {.center}
 
-### Graphs & algorithmically determining connectedness
+### Back to graphs
 
-:::{.fragment .p}
-- Formulated as an abstract data type, we have two operations
-manipulating the system:
-:::
+### Considering algorithmic question of connectedness
 
-:::{.fragment .subsubtext}
-1. FIND($i$): return the name of the set that contains $i$.
-:::
+### Based on maintaining a disjoint set system
 
-:::{.fragment .subsubtext}
-2. UNION($i,j$): assuming $i$ and $j$ belong to different sets in the system, replace the two sets by their union.
-:::
-
-::: {.notes}
-Back to graphs & considering algorithmic question of connectedness. It is based on maintaining a disjoint set system.
-:::
 
 ## Disjoint Set Systems
 
 ### Graphs & algorithmically determining connectedness
 
-:::{.fragment .p}
-- We need the `find` operation to test whether $i$ and $j$ indeed belong to different sets
-:::
-
-:::{.fragment .p}
-- Each successful union operation reduces the number of sets in the system by one
-:::
-
-:::{.fragment .p}
-- Starting with $n$ singleton sets, it therefore takes $n-1$ union operations to get to a single set
-:::
-
-:::{.fragment .p}
-- Since trees connecting the $n$ vertices can be generated this way, we thus have a proof that every tree with $n$ vertices has $m = n - 1$ edges
-:::
-
-## Disjoint Set Systems
-
-### Graphs & algorithmically determining connectedness
-
-:::{.fragment .p}
-- A typical data structure implementation stores each set as a tree
-embedded in a linear array, $V[1..n]$
-:::
-
-:::{.fragment .p}
-- Each node in the tree is equipped
-with a pointer to its *parent*, except for the *root*, which has no
-parent
+:::{.fragment}
+- 2 operations
 :::
 
 :::{.fragment .subtext}
--  Who is the parent of whom isn't important so long as the vertices are connected in a single tree
+1. FIND($i$): return name of set that contains $i$
 :::
 
-:::{.fragment .p}
-- We can implement the `find` operation by traversing the tree
-upward until the root is reached, reporting the root as the name of the
-set
+:::{.fragment .subtext}
+2. UNION($i, j$): assuming $i$ and $j$ in different sets in system, replace two sets by their union
+:::
+
+:::{.notes}
+- Formulated as an abstract data type, we have two operations
+manipulating the system:
+1. FIND($i$): return the name of the set that contains $i$.
+2. UNION($i,j$): assuming $i$ and $j$ belong to different sets in the system, replace the two sets by their union.
+
+:::
+
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment}
+- `find` tests whether $i$ and $j$ belong to different sets
+:::
+
+:::{.fragment}
+- Successful `union` reduces the number of sets in system by one
+:::
+
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment}
+- Starting with $n$ singleton sets, it takes $n-1$ `union`s to get a single set
+:::
+
+:::{.fragment}
+- Since trees connecting $n$ vertices can be generated, every tree with $n$ vertices has $m = n - 1$ edges
+:::
+
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment}
+- Data structure implementation stores each set as tree
+embedded in a linear array, $V[1..n]$
+:::
+
+:::{.fragment}
+- Each node in tree equipped with pointer to its *parent*, except for *root*
+:::
+
+## Disjoint Set Systems
+
+### Graphs & algorithmically determining connectedness
+
+:::{.fragment}
+- Implement `find` by traversing tree upward until root reached
+:::
+
+:::{.fragment}
+- Report root as name of set
+:::
+
+:::{.notes}
+-  Who is the parent of whom isn't important so long as the vertices are connected in a single tree
 :::
 
 ## Disjoint Set System
@@ -668,6 +907,14 @@ digraph BitConnections {
 ## Disjoint Set Systems
 
 :::{.fragment}
+- If $i$ is not the root, then we find it recursively and finally return it 
+:::
+
+:::{.fragment}
+- Otherwise, $i$ is returned as the root
+:::
+
+:::{.fragment}
 ```         
 int FIND(i)
     if V[i].parent ≠ null then return Find(V[i].parent)
@@ -676,13 +923,11 @@ int FIND(i)
 ```
 :::
 
-:::{.fragment .p}
-- If $i$ is not the root, then we find the root recursively and finally
-return it, otherwise, $i$ is returned as the root
-:::
 
-:::{.fragment .p}
-- We can then implement the `union` operation by linking one root to the other
+## Disjoint Set Systems
+
+:::{.fragment}
+- Implement `union` by linking one root to the other
 :::
 
 :::{.fragment}
@@ -693,20 +938,20 @@ void UNION(i, j)
 ```
 :::
 
-:::{.fragment .p}
-- After making sure the two sets are different, we assign one root as the
+:::{.fragment}
+- Make sure the two sets are different, then assign one root as the
 parent of the other
 :::
 
 ## Improving the running time
 
-:::{.fragment .p}
-- This is not a very efficient method, especially for long paths that may
+:::{.fragment}
+- Not a very efficient method, especially for long paths that may
 be traversed repeatedly
 :::
 
-:::{.fragment .p}
-- We prevent this by always linking the smaller tree to the larger one
+:::{.fragment}
+- Prevent by always linking smaller tree to larger one
 :::
 
 :::{.fragment}
@@ -722,18 +967,21 @@ void UNION(i,j)
 
 ## Improving the running time
 
-:::{.fragment .p}
-- A tree of $k$ nodes cannot have paths longer than $\log_2 k$ edges,
-since the size of the subtree grows by at least a factor of two each
+:::{.fragment}
+- The size of the subtree grows by at least a factor of two each
 time we pass the parent
 :::
 
-:::{.fragment .p}
-- To improve the efficiency even more, we compress paths whenever we traverse them
+:::{.fragment}
+- So tree of $k$ nodes cannot have paths longer than $\log_2 k$ edges
 :::
 
-:::{.fragment .p}
-- We also assume that roots are identified by pointing to themselves
+:::{.fragment}
+- To improve the efficiency more, compress paths whenever traversed
+:::
+
+:::{.fragment}
+- Assume that roots are identified by pointing to themselves
 :::
 
 ## Improving the running time
@@ -748,36 +996,69 @@ int FIND(i)
 ```
 :::
 
-:::{.fragment .p}
+:::{.fragment}
+- If $i$ not root:
+
+    [- `FIND` recursively finds root,]{.fragment}
+    
+    [- makes it the parent of $i$]{.fragment}
+    
+    [- reports the root]{.fragment}
+    
+    [- exits]{.fragment}
+
+[- Otherwise, `FIND` reports $i$ as the root and exits]{.fragment}
+:::
+
+
+:::{.notes}
 - If $i$ is not the root, then the function recursively finds the root,
 makes it the parent of $i$, reports the root, and exits; otherwise, the
 function reports $i$ as the root and exits
-:::
 
-:::{.fragment .subtext}
 - In analyzing the algorithm, we are interested in the running-time for
 executing a sequence of $m$ union and find operations; finding tight
 bounds is a difficult problem
 :::
 
+## Improving the running time
+
+:::{.fragment}
+- For $n$ vertices,  running-time $\leq O(m\alpha (n))$
+:::
+
 :::{.fragment .subtext}
+- $\alpha(n)$ is the slow growing inverse of the [Ackermann function](https://en.wikipedia.org/wiki/Ackermann_function)
+:::
+
+
+:::{.fragment .subtext}
+- $m$ is number of `FIND` & `UNION` operations
+:::
+
+:::{.fragment .subtext}
+- Eventually $\alpha(n) \rightarrow \infty$, but to reach even beyond five, need astronomically large number of vertices, more than electrons in the universe
+:::
+
+:::{.fragment .subtext}
+- For practical purposes, algorithm takes constant average time per operation, but theoretically not true
+:::
+
+
+:::{.notes}
 - For $n$ vertices, the running-time is never more than $O(m\alpha (n))$, where $\alpha(n)$ is the slow growing inverse of the [Ackermann function](https://en.wikipedia.org/wiki/Ackermann_function)
-:::
 
-:::{.fragment .subtext}
 - Eventually, $\alpha(n)$ goes to infinity, but to reach even beyond five, we need an astronomically large number of vertices, larger than electrons in the universe
-:::
 
-:::{.fragment .subtext}
 - For practical purposes, the algorithm takes constant average time per operation, but theoretically not true
 :::
 
-# I.2 Graphs - Curves in the Plane {#sec-CurvesPlane}
+# [I.2 Graphs - Curves in the Plane]{.smallertitle} {#sec-CurvesPlane}
+
+# [I.3 Graphs - Knots & Links]{.smallertitle} {#sec-KnotsLinks}
 
 
-# I.3 Graphs - Knots & Links {#sec-KnotsLinks}
-
-# I.4 Graphs - Planar Graphs {#sec-PlanarGraphs}
+# [I.4 Graphs - Planar Graphs]{.smallertitle} {#sec-PlanarGraphs}
 
 # II Surfaces
 
@@ -789,13 +1070,13 @@ bounds is a difficult problem
 
 - Surface Simplification
 
-# II.1 Surfaces - 2-dimensional Manifolds
+# [II.1 Surfaces - 2-dimensional Manifolds]{.smallertitle}
 
-# II.2 Surfaces - Searching a Triangulation
+# [II.2 Surfaces - Searching a Triangulation]{.smallertitle}
 
-# II.3 Surfaces - Self-intersections
+# [II.3 Surfaces - Self-intersections]{.smallertitle}
 
-# II.4 Surfaces - Surface Simplification
+# [II.4 Surfaces - Surface Simplification]{.smallertitle}
 
 # III Complexes
 
@@ -807,10 +1088,10 @@ bounds is a difficult problem
 
 - Alpha Complexes
 
-# III.1 Complexes - Simplical Complexes
+# [III.1 Complexes - Simplical Complexes]{.smallertitle}
 
-# III.2 Complexes - Convex Set Systems
+# [III.2 Complexes - Convex Set Systems]{.smallertitle}
 
-# III.3 Complexes - Delaunay Complexes
+# [III.3 Complexes - Delaunay Complexes]{.smallertitle}
 
-# III.4 Complexes - Alpha Complexes
+# [III.4 Complexes - Alpha Complexes]{.smallertitle}
