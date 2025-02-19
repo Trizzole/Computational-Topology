@@ -141,7 +141,7 @@ $$
 ::::: columns
 ::::{.column width="75%"}
 :::{.fragment .defn}
-- A subgraph of a graph $G = (V, E)$ is another graph $H = (U, F)$ formed from a subset of the vertices and edges of G
+- A **subgraph** of a graph $G = (V, E)$ is another graph $H = (U, F)$ formed from a subset of the vertices and edges of G
 :::
 
 :::{.fragment}
@@ -411,7 +411,7 @@ of subsets of $\mathbb{X}$, called *open sets*, such that
 
 :::{.fragment .subtext}
 3. if $U_i$ is open $\forall i$ in some possibly infinite, possibly
-     uncountable, index set, then $\bigcup\limits_{i\in I} U_i$ is open
+     uncountable set, then $\bigcup\limits_{i\in I} U_i$ is open
 :::
 
 :::{.fragment .subsubtext}
@@ -486,7 +486,7 @@ $$
 ### Why only finite intersection?
 
 :::{.fragment}
-- consider $\mathbb{X} = \mathbb{R}$
+- Consider $\mathbb{X} = \mathbb{R}$
 :::
 
 :::{.fragment}
@@ -561,11 +561,11 @@ of $\mathbb{Y}$
 :::
 
 :::{.fragment}
-- Know open intervals form basis for topology of $\mathbb R$
+- Open intervals form basis for topology of $\mathbb R$
 :::
 
 :::{.fragment}
-- Intersections $(a, b) \cap [0, 1]$ form basis of subspace topology of the closed interval
+- Intersections $(a, b) \cap [0, 1]$ form basis of subspace topology of $[0,1]$
 :::
 
 :::{.fragment .subtext}
@@ -682,6 +682,14 @@ spaces
 most spaces we will encounter they are the same
 :::
 
+## {.center}
+
+### Back to graphs
+
+### Considering algorithmic question of connectedness
+
+### Based on maintaining a disjoint set system
+
 ## Disjoint Set Systems
 
 ### Graphs & algorithmically determining connectedness
@@ -718,14 +726,6 @@ most spaces we will encounter they are the same
 :::{.notes}
 - Adding edges one at a time and maintaining the systems of sets representing the components, we find that the graph is connected iff at the end, there is only one set left, $[n]$
 :::
-
-## {.center}
-
-### Back to graphs
-
-### Considering algorithmic question of connectedness
-
-### Based on maintaining a disjoint set system
 
 
 ## Disjoint Set Systems
@@ -863,8 +863,8 @@ digraph BitConnections {
     12 [label="12"];
     13 [label="13"];
     14 [label="14"];
-    15 [label="15"];
-    16 [label="16", fillcolor=white];
+    15 [label="15", fillcolor=white];
+    16 [label="16"];
 
     // Arrange nodes in horizontal order
     { rank=same; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; }
@@ -1024,7 +1024,7 @@ bounds is a difficult problem
 ## Improving the running time
 
 :::{.fragment}
-- For $n$ vertices,  running-time $\leq O(m\alpha (n))$
+- For $n$ vertices, running-time $\leq O(m\alpha (n))$
 :::
 
 :::{.fragment .subtext}
