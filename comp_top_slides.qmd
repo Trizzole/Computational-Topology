@@ -227,10 +227,6 @@ strict graph G {
 - 10 edges, 5 crossings
 :::
 
-:::{.fragment}
-- Red edges form a *spanning tree*
-:::
-
 :::{.notes}
 -   It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon
 -   The four red edges connect the same five vertices and form a spanning tree of the complete graph
@@ -249,8 +245,6 @@ strict graph G {
   B -- C, D, E [penwidth = 1];
   C -- D, E [penwidth = 1];
   D -- E [penwidth = 1];
-  A -- B, C, D [penwidth = 3, color = "red"];
-  D -- E [penwidth = 3, color = "red"];
 }
 ```
 ::::
@@ -262,7 +256,7 @@ strict graph G {
 :::: {.column width="80%"}
 
 :::{.fragment .defn}
-- A **path** between vertices $u$ and $v$ can be described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$, with and edge between $u_i$ and $u_{i + 1}$ for each $0 \leq i \leq k - 1$
+- A **path** between vertices $u$ and $v$ can be described by a sequence of vertices, $u = u_0, u_1, \ldots , u_k = v$, with an edge between $u_i$ and $u_{i + 1}$ for each $0 \leq i \leq k - 1$
 :::
 
 :::{.fragment .subtext}
@@ -307,7 +301,7 @@ strict graph G {
 :::
 
 :::{.fragment .defn}
-- A **tree** is any graph which any two vertices are connected by exactly one path
+- A **tree** is any graph which any two vertices are connected by exactly one simple path
 :::
 
 :::{.fragment .subtext}
@@ -587,7 +581,7 @@ $\mathbb {R}$
 ## Continuity, Paths, and Connectedness
 
 :::{.fragment .defn}
-- A function from one topological space to another is **continuous** if the preimage of every set is open
+- A function from one topological space to another is **continuous** if the preimage of every open set is open
 :::
 
 :::{.fragment}

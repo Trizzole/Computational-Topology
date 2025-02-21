@@ -444,7 +444,7 @@
   <meta name="generator" content="quarto-1.5.57">
 
   <meta name="author" content="Thomas Reinke">
-  <meta name="dcterms.date" content="2025-02-19">
+  <meta name="dcterms.date" content="2025-02-21">
   <title>Computational Topology Part A</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1163,7 +1163,7 @@ Thomas Reinke
     </div>
 </div>
 
-  <p class="date">2025-02-19</p>
+  <p class="date">2025-02-21</p>
 </section>
 <section id="resources" class="slide level2">
 <h2>Resources</h2>
@@ -1513,11 +1513,6 @@ display:block!important;
 <li>10 edges, 5 crossings</li>
 </ul>
 </div>
-<div class="fragment">
-<ul>
-<li>Red edges form a <em>spanning tree</em></li>
-</ul>
-</div>
 <aside class="notes">
 <ul>
 <li>It has ten edges which form five crossings if drawn as sides and diagonals of a convex pentagon</li>
@@ -1557,7 +1552,7 @@ display:block!important;
 <!-- A&#45;&#45;B -->
 <g id="edge1" class="edge">
 <title>A--B</title>
-<path fill="none" stroke="red" stroke-width="3" d="M7.11,-37.51C20.93,-36.24 70.4,-31.7 84.04,-30.44" />
+<path fill="none" stroke="black" d="M7.11,-37.51C20.93,-36.24 70.4,-31.7 84.04,-30.44" />
 </g>
 <!-- C -->
 <g id="node3" class="node">
@@ -1567,7 +1562,7 @@ display:block!important;
 <!-- A&#45;&#45;C -->
 <g id="edge2" class="edge">
 <title>A--C</title>
-<path fill="none" stroke="red" stroke-width="3" d="M6.31,-35.37C13.47,-29.1 32.28,-12.58 39.63,-6.13" />
+<path fill="none" stroke="black" d="M6.31,-35.37C13.47,-29.1 32.28,-12.58 39.63,-6.13" />
 </g>
 <!-- D -->
 <g id="node4" class="node">
@@ -1577,7 +1572,7 @@ display:block!important;
 <!-- A&#45;&#45;D -->
 <g id="edge3" class="edge">
 <title>A--D</title>
-<path fill="none" stroke="red" stroke-width="3" d="M4.98,-41.29C8.77,-50.15 18.82,-73.59 22.59,-82.41" />
+<path fill="none" stroke="black" d="M4.98,-41.29C8.77,-50.15 18.82,-73.59 22.59,-82.41" />
 </g>
 <!-- E -->
 <g id="node5" class="node">
@@ -1617,7 +1612,7 @@ display:block!important;
 <!-- D&#45;&#45;E -->
 <g id="edge10" class="edge">
 <title>D--E</title>
-<path fill="none" stroke="red" stroke-width="3" d="M27.78,-85.46C37.33,-84.54 62.63,-82.08 72.14,-81.16" />
+<path fill="none" stroke="black" d="M27.78,-85.46C37.33,-84.54 62.63,-82.08 72.14,-81.16" />
 </g>
 </g>
 </svg>
@@ -1634,7 +1629,7 @@ display:block!important;
 <div class="column" style="width:80%;">
 <div class="fragment defn">
 <ul>
-<li>A <strong>path</strong> between vertices <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> can be described by a sequence of vertices, <span class="math inline">\(u = u_0, u_1, \ldots , u_k = v\)</span>, with and edge between <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_{i + 1}\)</span> for each <span class="math inline">\(0 \leq i \leq k - 1\)</span></li>
+<li>A <strong>path</strong> between vertices <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> can be described by a sequence of vertices, <span class="math inline">\(u = u_0, u_1, \ldots , u_k = v\)</span>, with an edge between <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_{i + 1}\)</span> for each <span class="math inline">\(0 \leq i \leq k - 1\)</span></li>
 </ul>
 </div>
 <div class="fragment subtext">
@@ -1765,7 +1760,7 @@ display:block!important;
 </div>
 <div class="fragment defn">
 <ul>
-<li>A <strong>tree</strong> is any graph which any two vertices are connected by exactly one path</li>
+<li>A <strong>tree</strong> is any graph which any two vertices are connected by exactly one simple path</li>
 </ul>
 </div>
 <div class="fragment subtext">
@@ -2277,7 +2272,7 @@ display:block!important;
 <h2>Continuity, Paths, and Connectedness</h2>
 <div class="fragment defn">
 <ul>
-<li>A function from one topological space to another is <strong>continuous</strong> if the preimage of every set is open</li>
+<li>A function from one topological space to another is <strong>continuous</strong> if the preimage of every open set is open</li>
 </ul>
 </div>
 <div class="fragment">
