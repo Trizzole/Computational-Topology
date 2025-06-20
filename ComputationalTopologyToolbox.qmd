@@ -204,7 +204,7 @@ A decomposition of a topological space into simple pieces.
 ```{r}
 # 1. Define polygon boundaries and vertices
 outer_boundary_pts <- tibble::tibble(x = c(0, 9, 9, 5, 5, 0), y = c(0, 0, 7, 7, 5, 5))
-inner_hole_pts <- tibble::tibble(x = c(2, 2, 7), y = c(2, 4, 4))
+inner_hole_pts <- tibble::tibble(x = c(2, 2, 7, 7), y = c(2, 4, 4, 2))
 
 all_vertices <- dplyr::bind_rows(outer_boundary_pts, inner_hole_pts) |>
   dplyr::mutate(id = dplyr::row_number())
@@ -786,7 +786,7 @@ $$
 -   It provides a more geometrically accurate structure than the VR or Čech complexes.
 -   A simplex $\sigma$ is included if the intersection of balls of radius $r$ with their corresponding **Voronoi cells** is non-empty.
     -   These regions are defined as $R_u(r) = B_u(r) \cap V_u$ for each vertex $u$.
--   As $r$ increases, more simplices are included, until the Alpha complex becomes the full Delaunay triangulation.
+-   As $r$ increases, more simplices are included, until the Alpha complex becomes the full Delaunay complex.
 :::
 
 :::{.notes}
@@ -815,40 +815,36 @@ $$
 
 ## Comparison
 
-```{r}
-#| class: .r-stretch
 
-# --- Helper Function: Calculate Circumradius ---
+```{r}
+# --- Helper function to calculate circumradius ---
 circumradius <- function(pts) {
   a <- as.numeric(dist(pts[c(1, 2), ]))
   b <- as.numeric(dist(pts[c(1, 3), ]))
   c <- as.numeric(dist(pts[c(2, 3), ]))
+  sides <- sort(c(a, b, c))
+  if (abs((sides[1] + sides[2]) - sides[3]) < 1e-9) return(Inf)
   s <- (a + b + c) / 2
   area <- sqrt(s * (s - a) * (s - b) * (s - c))
-  if (is.nan(area) || abs(area) < 1e-9) return(Inf)
+  if (abs(area) < 1e-9) return(Inf)
   return((a * b * c) / (4 * area))
 }
 
 # --- 1. Point and Parameter Setup ---
-# A corrected, cohesive point set to robustly show all differences.
+# A single set of 4 points: a wide triangle (A,B,C) with a point (D) inside.
 points_df <- tibble::tribble(
-  ~x,     ~y,    ~name,
-  # For VR > Cech (a very wide triangle)
-   0.0,    0.0,    "A",
-   1.95,   0.0,    "B",
-   0.975,  0.2,    "C",
-  # For Cech > Alpha (a Delaunay violation, positioned nearby)
-   2.0,    2.9,    "D",
-   1.22,   1.55,   "E",
-   2.78,   1.55,   "F",
-   2.0,    2.0,    "G"
-) |>
-  dplyr::mutate(id = dplyr::row_number())
+  ~x,    ~y,  ~name,
+  -3,   0.0,  "A",
+   3,   0.0,  "B",
+   0,   4.0,  "C",
+   0,   1.0,  "D"
+) |> dplyr::mutate(id = dplyr::row_number())
 
-r <- 1.0
+# A large radius is chosen to make the wide triangle a Cech simplex.
+r <- 3
 
 # --- 2. Geometric Computations ---
-delaunay_info <- deldir::deldir(points_df$x, points_df$y, suppressMsge = TRUE)
+delaunay_info <- deldir::deldir(points_df$x, points_df$y)
 delaunay_edges <- delaunay_info$delsgs |> dplyr::transmute(p1 = ind1, p2 = ind2)
 delaunay_tris <- deldir::triang.list(delaunay_info) |>
   purrr::map_dfr(~tibble::tibble(p1 = .x$ptNum[1], p2 = .x$ptNum[2], p3 = .x$ptNum[3]))
@@ -858,15 +854,9 @@ all_tris <- as_tibble(t(combn(points_df$id, 3))) |> set_names("p1", "p2", "p3")
 dist_mat <- as.matrix(dist(points_df[, c("x", "y")]))
 
 # --- 3. Complex Calculation ---
-
-# -- Vietoris-Rips Complex --
+# -- VR Complex --
 vr_edges <- all_edges |> dplyr::filter(dist_mat[cbind(p1, p2)] <= 2 * r)
-vr_tris <- all_tris |>
-  dplyr::filter(
-    dist_mat[cbind(p1, p2)] <= 2 * r &
-    dist_mat[cbind(p1, p3)] <= 2 * r &
-    dist_mat[cbind(p2, p3)] <= 2 * r
-  )
+vr_tris <- all_tris |> dplyr::filter(dist_mat[cbind(p1, p2)] <= 2 * r & dist_mat[cbind(p1, p3)] <= 2 * r & dist_mat[cbind(p2, p3)] <= 2 * r)
 
 # -- Cech Complex --
 cech_edges <- vr_edges
@@ -874,7 +864,8 @@ cech_tris_list <- list()
 for (i in 1:nrow(all_tris)) {
   p_indices <- as.numeric(all_tris[i, ])
   pts_matrix <- as.matrix(points_df[p_indices, c("x", "y")])
-  if (circumradius(pts_matrix) <= r) {
+  rad <- circumradius(pts_matrix)
+  if (rad <= r) {
     cech_tris_list[[length(cech_tris_list) + 1]] <- all_tris[i, ]
   }
 }
@@ -884,32 +875,20 @@ cech_tris <- dplyr::bind_rows(cech_tris_list)
 alpha_edges <- delaunay_edges |> dplyr::filter(dist_mat[cbind(p1, p2)] <= 2 * r)
 alpha_tris <- dplyr::inner_join(cech_tris, delaunay_tris, by = c("p1", "p2", "p3"))
 
-
 # --- 4. Plotting ---
 create_complex_plot <- function(title, edge_df, tri_df) {
-  edge_data <- edge_df |>
-    tidyr::pivot_longer(cols = c(p1, p2), values_to = "id") |>
-    dplyr::left_join(points_df, by = "id") |>
-    dplyr::mutate(edge_id = rep(1:nrow(edge_df), each = 2))
-
-  tri_data <- tri_df |>
-    dplyr::select(p1, p2, p3) |>
-    tidyr::pivot_longer(cols = c(p1, p2, p3), values_to = "id") |>
-    dplyr::left_join(points_df, by = "id") |>
-    dplyr::mutate(tri_id = rep(1:nrow(tri_df), each = 3))
-
+  edge_data <- edge_df |> tidyr::pivot_longer(cols = c(p1, p2), values_to = "id") |> dplyr::left_join(points_df, by = "id") |> dplyr::mutate(edge_id = rep(1:nrow(edge_df), each = 2))
+  tri_data <- tri_df |> dplyr::select(p1, p2, p3) |> tidyr::pivot_longer(cols = c(p1, p2, p3), values_to = "id") |> dplyr::left_join(points_df, by = "id") |> dplyr::mutate(tri_id = rep(1:nrow(tri_df), each = 3))
+  
   ggplot2::ggplot(points_df, ggplot2::aes(x = x, y = y)) +
-    ggforce::geom_circle(ggplot2::aes(x0 = x, y0 = y, r = r), color = "gray80", linetype = "dashed") +
-    ggplot2::geom_polygon(data = tri_data, ggplot2::aes(group = tri_id), fill = "skyblue", alpha = 0.6) +
+    ggforce::geom_circle(ggplot2::aes(x0 = x, y0 = y, r = r), color = "gray80", fill = NA, linetype = "dashed") +
+    ggplot2::geom_polygon(data = tri_data, ggplot2::aes(group = tri_id), fill = "skyblue", alpha = 0.5) +
     ggplot2::geom_line(data = edge_data, ggplot2::aes(group = edge_id), color = "black", linewidth = 1) +
-    ggplot2::geom_point(size = 3.5, color = "#e41a1c") +
-    ggplot2::geom_text(ggplot2::aes(label = name), nudge_y = 0.25, size = 3.5, fontface = "bold") +
-    ggplot2::coord_fixed(xlim = c(-0.5, 3.5), ylim = c(-0.5, 3.5)) +
+    ggplot2::geom_point(size = 4, color = "black") +
+    ggplot2::geom_text(ggplot2::aes(label = name), color = "white", size = 3, fontface = "bold") +
+    ggplot2::coord_fixed(xlim = c(-4.5, 4.5), ylim = c(-1, 5)) +
     ggplot2::theme_void() +
-    ggplot2::theme(
-        legend.position = "none",
-        plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 16)
-    ) +
+    ggplot2::theme(legend.position = "none", plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 16)) +
     ggplot2::labs(title = title)
 }
 
@@ -919,26 +898,14 @@ plot_alpha <- create_complex_plot("Alpha Complex", alpha_edges, alpha_tris)
 
 # --- 5. Combine and Display Plots ---
 plot_alpha + plot_cech + plot_vr
-
 ```
 
-::: {.notes}
-Here's a breakdown of how these plots illustrate the key differences between the Alpha, Čech, and Vietoris-Rips complexes. The fundamental relationship is that for a given point set and radius $r$, the complexes are nested within each other: $\text{Alpha} \subseteq \text{Čech} \subseteq \text{Vietoris-Rips}$.
+:::{.notes}
+-   This single 4-point example highlights the key differences between the complexes.
 
-**1. Vietoris-Rips vs. Čech Complex**
+-   **VR vs. Čech**: Notice the wide triangle `A-B-D`. It exists in the **VR complex** because all its points are pairwise close. It vanishes in the **Čech complex** because its circumcircle is too large (i.e., its circumradius is greater than `r`).
 
-* **The Rule:** A triangle (2-simplex) exists in the Vietoris-Rips (VR) complex if all three of its edges have a length less than or equal to $2r$. The Čech complex has a stricter requirement: a triangle exists only if the balls of radius $r$ centered at each vertex have a common intersection. This is equivalent to the triangle's circumradius being less than or equal to $r$.
-* **The Example:** Look at triangle `ABC`. It is intentionally constructed to be wide and flat.
-    * In the **Vietoris-Rips plot**, `ABC` is filled in because all its pairwise distances are less than $2r$.
-    * In the **Čech plot**, `ABC` is *not* filled in. This is because its circumradius is much larger than $r$, so the three balls centered at A, B, and C do not have a common intersection. This single triangle demonstrates that the Čech complex can be a strict subset of the VR complex.
-
-**2. Čech vs. Alpha Complex**
-
-* **The Rule:** The Alpha complex is a subcomplex of the Delaunay triangulation. For a triangle to be included, it must first meet the Čech condition (circumradius $\le r$), *and* its circumcircle must be "empty," meaning it contains no other points from the set.
-* **The Example:** Now, look at triangle `DEF` and the nearby point `G`.
-    * In the **Čech plot**, triangle `DEF` is filled in. It was designed so its circumradius is less than or equal to $r$.
-    * In the **Alpha plot**, `DEF` is *not* filled in. This is because point `G` was deliberately placed inside the circumcircle of `DEF`. This violates the "empty circumcircle" rule of the Delaunay triangulation. Therefore, even though it satisfies the Čech condition, it is excluded from the Alpha complex.
-
+-   **Čech vs. Alpha**: Now look at the overarching triangle `A-B-C`. It exists in the **Čech complex** because its circumradius is less than `r`. However, it vanishes in the **Alpha complex** because it is not a Delaunay triangle (point `D` lies inside its circumcircle).
 :::
 
 # Euler Characteristic {#euler-characteristic .smaller}
@@ -955,6 +922,12 @@ Here's a breakdown of how these plots illustrate the key differences between the
 :::
 
 :::{.notes}
+- Provides single summary statistic for shape/feature of data over all dimensions vs persistent homology which is dimension specific. 
+
+- $\chi = 2 - 2g$ where $g$ is genus - which is the holes/handles in a surface.
+
+- $g(0) = \beta_1 / 2$
+
 **Betti numbers ($\beta_p$)** provide a summary of a shape by counting its "holes" in each dimension.
 
 * **$\beta_0$**: Counts the number of **connected components** or clusters. A dataset with two separate clusters has $\beta_0 = 2$. A circle has 1. 
