@@ -1,0 +1,203 @@
+// Custom SCSS Theme for Quarto RevealJS Presentation
+// File: quarto-assets/gemini-theme-revised.scss
+
+// --- Color Palette (Original Cool Tones - Corrected Comment) ---
+//$primary-color: #005f73;    // Muted teal/blue
+//$secondary-color: #94d2bd;  // Lighter complementary teal/green
+//$accent-color: #154734;     // Dark Green (Used for links/highlights)
+//$text-color: #333333;       // Dark gray for text
+//$text-light-color: #666666;  // Lighter gray for subtle text
+//$background-color: #ffffff; // White background
+//$code-bg-color: #f1f1f1;    // Code block background
+//$warning-color: #b22222;    // Firebrick for warnings
+
+// --- Color Palette (Wes Anderson - Forest Scouts) ---
+$primary-color: #5a7d7c;    // Muted teal/green
+$secondary-color: #c8a77b;  // Khaki/Tan
+$accent-color: #3e594a;     // Dark forest green (for links/highlights)
+$text-color: #4a4a4a;       // Dark grayish brown
+$text-light-color: #8a8a8a;  // Lighter grayish brown
+$background-color: #f7f3e9; // Warm off-white/Light tan
+$code-bg-color: #eae6da;    // Light beige for code
+$warning-color: #c94c4c;    // Muted warning red
+
+
+// --- Derived/General Variables ---
+$border-color: darken($background-color, 15%); // General border color derived from background
+$link-hover-color: lighten($accent-color, 40%); // Calculate link hover color
+
+/*-- scss:defaults --*/
+// --- SCSS Defaults Overrides ---
+// Use !default, Quarto handles the actual override based on order.
+
+// Typography
+$presentation-font-size-root: 30px !default; // Base size (adjust if too large)
+$presentation-h1-font-size: 2.2em !default;
+$presentation-h2-font-size: 1.5em !default;
+$presentation-h3-font-size: 1.2em !default;
+$presentation-h4-font-size: 1.0em !default;
+$line-height-base: 1.6 !default; // Default line height
+
+// Colors
+$body-bg: $background-color !default;
+$body-color: $text-color !default;
+$link-color: $accent-color !default;
+$link-color-hover: $link-hover-color !default;
+
+// Code Blocks
+$code-block-bg: $code-bg-color !default;
+$code-block-border-color: darken($code-bg-color, 10%) !default;
+$code-color: $text-color !default; // Ensure code text color matches body
+
+// Spacing
+$presentation-block-margin: 0.75em !default; // Default margin for blocks (slightly increased)
+
+
+/*-- scss:rules --*/
+// --- Custom CSS Rules ---
+
+// General Readability
+body {
+  // Base body styles if needed, often covered by defaults
+}
+
+p, ul, ol, li {
+  font-size: 1em; // Inherit from root size or specific parent
+  line-height: $line-height-base; // Use variable
+  margin-bottom: $presentation-block-margin * 0.5; // Add some space between paragraphs/list items
+}
+
+ul, ol {
+  margin-left: 1.5em; // Standard indentation
+  padding-left: 0; // Remove default padding if margin is used for indent
+}
+
+// Code Cells / Output
+.cell {
+  margin-top: $presentation-block-margin;
+  margin-bottom: $presentation-block-margin;
+  // font-size: 0.9em; // Optionally slightly smaller if needed
+}
+
+// --- Text Utility Classes ---
+.text-subtle {
+  font-size: 0.85em;
+  color: $text-light-color;
+}
+
+.text-warning {
+  color: $warning-color;
+  font-weight: bold; // Make warnings stand out more
+}
+
+.text-highlight {
+  color: $primary-color;
+  font-weight: bold;
+}
+
+.emphasis {
+  font-style: italic;
+  font-weight: bold;
+}
+
+// --- Semantic Content Blocks ---
+.definition {
+  font-style: italic;
+  color: $primary-color;
+  border-left: 4px solid $secondary-color; // Slightly thicker border
+  padding: 0.5em 1em; // Add padding all around
+  margin: $presentation-block-margin 0;
+  background-color: lighten($secondary-color, 25%); // Subtle background tint
+}
+
+.source-citation {
+  font-size: 0.7em; // Slightly larger for readability
+  color: $text-light-color;
+  text-align: right;
+  display: block;
+  margin-top: $presentation-block-margin * 1.5; // More space above citation
+  margin-bottom: $presentation-block-margin * 0.5;
+}
+
+// Styled Box / Insert
+.content-box {
+  background-color: $background-color;
+  border: 1px solid $border-color; // Use variable
+  border-radius: 6px; // Slightly larger radius
+  padding: 1em 1.5em; // Adjust padding
+  margin: $presentation-block-margin 0;
+}
+
+// Quote Styling
+blockquote {
+  border-left: 4px solid $secondary-color; // Match definition border
+  padding: 0.5em 1em; // Match definition padding
+  color: $text-light-color; // Keep subtle text or change to $text-color
+  margin: $presentation-block-margin 0;
+  font-style: italic; // Common quote style
+}
+
+.quote-attribution {
+  text-align: right;
+  font-size: 0.85em;
+  color: $text-light-color;
+  margin-top: 0.5em;
+  font-style: normal; // Ensure attribution isn't italicized
+}
+
+// --- Layout Helpers ---
+.v-center-container {
+  display: flex;
+  flex-direction: column; // Allow content to stack vertically if needed
+  justify-content: center;
+  align-items: center;
+  height: 90%; // Adjust height as needed relative to slide
+  width: 100%;
+}
+
+// --- List Styling ---
+
+// Custom Bullet Points (Primary Level)
+ul li::marker {
+  content: '▸ '; // Right-pointing triangle
+  color: $primary-color;
+  font-size: 1.1em; // Slightly larger marker
+}
+
+// Custom Bullet Points (Nested Level)
+ul ul li::marker {
+  content: '▹ '; // White pointing triangle
+  color: $secondary-color;
+  font-size: 1em; // Reset or adjust size
+}
+
+// --- Slide Title Styling ---
+// Target headings within slide sections, excluding the title slide
+.reveal .slides section:not(:first-child) > h1,
+.reveal .slides section:not(:first-child) > h2,
+.reveal .slides section:not(:first-child) > h3 {
+  border: 8px solid $primary-color;
+  border-radius: 8px;
+  padding: 0.25em 0.25em;
+  margin: $presentation-block-margin * 0.5 0 $presentation-block-margin * 0.5 0; // Add some margin below heading
+  // display: block; // Default, usually not needed
+}
+
+// --- Optional: Minimal Scrollbars ---
+/* Uncomment if scrollbars are needed and desired
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: darken($border-color, 10%); // Use theme color
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: $code-bg-color; // Use theme color
+}
+body {
+  scrollbar-width: thin; // For Firefox
+  scrollbar-color: darken($border-color, 10%) $code-bg-color; // For Firefox (thumb track)
+}
+*/

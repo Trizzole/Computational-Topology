@@ -1,0 +1,13 @@
+/*-- scss:defaults --*/
+// Base document colors
+//$body-bg: #181818;
+//$body-color: white;
+$link-color: #007A33;
+$link-color-hover: lighten($link-color, 15%);
+$selection-bg: ligthen($link-color, 25%);
+//$selection-color: $body-bg;
+
+// Code blocks
+$code-block-bg-alpha: -.7;
+
+$toc-color: #007A33;

@@ -1,0 +1,1195 @@
+---
+title: "Computational Topology"
+subtitle: "Toolbox"
+author:
+  - name: Thomas Reinke
+    affiliation: 
+      - name: Baylor University
+        department: Statistical Science
+        # city: Waco
+        # state: TX
+        # country: US
+        url: https://www.baylor.edu
+    # email: thomas_reinke1@baylor.edu
+date: today
+date-format: "MMMM D, YYYY"
+format: 
+  revealjs:
+    theme: 
+      - quarto-assets/baylor-theme.scss
+    smaller: false
+    scrollable: false
+    show-slide-number: all
+    toc: false
+    toc-depth: 1
+    preview-links: true
+    slide-number: c/t
+    multiplex: false
+    embed-resources: true
+    auto-animate: true
+    footer: "Thomas Reinke"
+lightbox:
+  match: auto
+  effect: fade
+  desc-position: bottom
+  loop: true
+logo: "quarto-assets/baylor.png"
+license: "CC BY-NC"
+copyright: 
+  holder: Thomas Reinke
+  year: 2025
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, setup}
+#| include: false
+#| message: false
+#| eval: true # make sure to eval: true when code time!!!!!!!
+library(knitr)
+library(tidyverse)
+library(conflicted)
+library(janitor)
+library(kableExtra)
+library(ripserr)
+library(tdarec)
+library(simplextree)
+library(phutil)
+library(ggtda)
+library(tdaunif)
+library(interplex)
+library(plotly)
+library(patchwork)
+library(gganimate)
+library(ggforce)
+library(TDA)
+library(deldir)
+library(alphahull)
+library(RTriangle)
+library(rgudhi)
+library(ggraph)
+library(igraph)
+conflicted::conflict_prefer("filter", "dplyr")
+conflicted::conflict_prefer("select", "dplyr")
+conflicted::conflicts_prefer(ggtda::geom_simplicial_complex)
+conflicted::conflicts_prefer(plotly::layout)
+knitr::opts_chunk$set(
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  cache = FALSE, # Change to true at the end
+  echo = FALSE,
+  tidy.opts = list(width.cutoff = 100),
+  tidy = FALSE,
+  fig.align = "center"
+)
+ggplot2::theme_set(ggplot2::theme_minimal())
+ggplot2::theme_update(panel.grid.minor = ggplot2::element_blank())
+
+```
+
+::: {.content-hidden}
+$$
+{{< include quarto-assets/_macros.tex >}}
+$$
+:::
+
+
+## Contents {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+1.  [Complexes (Chap. III)](#complexes-chapter-iii)
+    -   [Simplicial Complexes](#simplicial-complexes)
+    -   [Triangulation and Searching](#triangulation)
+    -   [Nerve](#nerve)
+    -   [Delaunay Complexes](#delaunay-complexes)
+    -   [Alpha Complexes](#alpha-complexes)
+3.  [Euler Characteristic](#euler-characteristic)
+4.  [Homology (Chap. IV)](#homology-chapter-iv)
+    -   [Homology Groups](#homology-groups)
+    -   [Exact Sequences](#exact-sequences)
+:::
+
+::: {.column width="50%"}
+5.  [Morse Functions (Chap. VI)](#morse-functions-chapter-vi)
+    -   [Generic Smooth Functions](#generic-smooth-functions)
+    -   [Handle Decomposition & Morse Complex](#handle-decomposition-morse-complex)
+    -   [Piecewise Linear (PL) Functions](#piecewise-linear-pl-functions)
+    -   [Reeb Graphs](#reeb-graphs)
+6.  [Persistence (Chap. VII)](#persistence-chapter-vii)
+    -   [Persistent Homology](#persistent-homology)
+    -   [Implementation](#implementation)
+    -   [Spectral Sequences](#spectral-sequences)
+7.  [Stability (Chap. VIII)](#stability-chapter-viii)
+    -   [Stability Theorems](#stability-theorems)
+8.  [Relevant R Packages](#packages)
+:::
+
+::::
+
+
+# Complexes (Chapter III) {#complexes-chapter-iii}
+
+A decomposition of a topological space into simple pieces.
+
+## Simplicial Complexes {#simplicial-complexes}
+
+:::{.fragment}
+-   **Simplex**: The **convex hull** of $k+1$ affinely independent points. A $k$-simplex has dimension $k$.
+    -   Examples: vertex (0-simplex), edge (1-simplex), triangle (2-simplex), tetrahedron (3-simplex).
+:::
+
+:::{.fragment}
+-  **Simplicial Complex**: A finite collection of simplices $K$ such that:
+    1.  If $\sigma \in K$ and $\tau \le \sigma$ (τ is a face of σ), then $\tau \in K$.
+    2.  If $\sigma, \, \sigma_0 \in K$, then $\sigma \cap  \sigma_0$ is either empty or a face of both.
+:::
+
+:::{.notes}
+- convex hull: the smallest convex set that encloses all the points, forming a convex polygon
+- Face: A face of a simplex is the convex hull of any non-empty subset of its vertices. For a simplex $\sigma$ defined by vertices $\{v_0, v_1, \cdots , v_k\}$, any simplex $\tau$ formed by a subset of these vertices is a face of $\sigma$.
+    - Proper if the subset isn't the entire set
+:::
+    
+## Simplicial Complexes 
+
+:::{.fragment}
+-   **j-skeleton** ($K^{(j)}$): The subcomplex consisting of all simplices of dimension $j$ or less. The 0-skeleton is the vertex set (Vert $K$).
+:::
+
+:::{.fragment}
+ - **Star**: St $\sigma$ of  $\sigma \in K$ is the set of all simplices $\tau \in K$ s.t. $\sigma$ is a face ($\sigma \le \tau$).
+::: 
+
+:::{.fragment}
+-  **Closed Star**: $\overline{\text{St}}\, \sigma$ is the smallest subcomplex containing St $\sigma$ (i.e., St $\sigma$ and all their faces).
+:::
+
+:::{.fragment}
+- **Link**: Lk $\sigma$ consists of all simplices in $\overline{\text{St}}\,\sigma$ that are disjoint from $\sigma$.
+    - If $\tau$ is a vertex, then the link is just the difference between the closed star and the star.
+:::
+
+ <!-- -   For a vertex $u$, $N(u) = \bigcup_{\sigma \in \text{St } u} \text{int } \sigma$ is an open set. -->
+
+:::{.notes}
+-   **Face**: A face of a simplex $\sigma$ is a simplex formed by removing one or more vertices from $\sigma$. The convex hull of any nonempty subset of the $n + 1$ points that define an n-simplex
+- **Coface**: A simplex $A$ is a coface of a simplex $B$ if $B$ is a face of $A$.
+:::
+
+
+## Triangulation {#triangulation}
+
+:::{.fragment}
+-   A **triangulation** of a topological space $X$ is a **simplicial complex K** together with a **homeomorphism** between $X$ and the underlying space of $K$, $|K|$. A space is **triangulable** if it has a triangulation.
+:::
+
+:::{.incremental}
+-   **Searching a Triangulation**: Involves using a data structure that represents a surface's triangulation to determine its topological properties, such as orientability or genus.
+    -   Ex: Triangulation of a simple closed polygon involves decomposing it into triangles using its vertices and non-intersecting diagonals.
+    -   Ex: Triangulation of a 2-manifold decomposes it into triangular regions homeomorphic to a triangle, where any two triangles meet appropriately (disjoint, shared edge, or shared vertex).
+:::
+    
+:::{.notes}
+-   **Homeomorphism**: A continuous function with a continuous inverse, preserving topological properties.
+- **Orientability**: A surface is orientable if its constituent triangles can be coherently oriented (e.g., all clockwise) such that any shared edge is traversed in opposite directions by its adjacent triangles. Informally, it's a surface with two distinct sides (like a sphere) and not a one-sided surface (like a Möbius strip).
+- **Genus**: Similar to characteristic, measures the number of "holes" or "handles" of a surface.
+:::
+
+## Triangulation
+
+```{r}
+# 1. Define polygon boundaries and vertices
+outer_boundary_pts <- tibble::tibble(x = c(0, 9, 9, 5, 5, 0), y = c(0, 0, 7, 7, 5, 5))
+inner_hole_pts <- tibble::tibble(x = c(2, 2, 7), y = c(2, 4, 4))
+
+all_vertices <- dplyr::bind_rows(outer_boundary_pts, inner_hole_pts) |>
+  dplyr::mutate(id = dplyr::row_number())
+
+boundary_data <- dplyr::bind_rows(
+  outer_boundary_pts |> dplyr::add_row(outer_boundary_pts |> head(1)) |> dplyr::mutate(shape = "outer"),
+  inner_hole_pts   |> dplyr::add_row(inner_hole_pts   |> head(1)) |> dplyr::mutate(shape = "inner")
+)
+
+# 2. Create the "Before" plot
+plot_without_triangulation <- ggplot2::ggplot() +
+  ggplot2::geom_path(data = boundary_data, ggplot2::aes(x = x, y = y, group = shape), color = "black", linewidth = 1.2) +
+  ggplot2::geom_point(data = all_vertices, ggplot2::aes(x = x, y = y), size = 3, color = "black") +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(title = "Polygon") +
+  ggplot2::theme_void() +
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 16))
+
+# 3. Perform triangulation
+triangle_indices <- decido::earcut(
+  x = as.matrix(all_vertices |> dplyr::select(x, y)),
+  holes = nrow(outer_boundary_pts) + 1
+)
+
+triangle_defs <- tibble::tibble(id = triangle_indices) |>
+  dplyr::mutate(triangle_id = rep(1:(dplyr::n() / 3), each = 3),
+                vertex_num = rep(c("v1", "v2", "v3"), times = dplyr::n() / 3)) |>
+  tidyr::pivot_wider(names_from = vertex_num, values_from = id)
+
+# 4. Build an adjacency graph for the triangles
+edge_to_tri_map <- list()
+for (i in 1:nrow(triangle_defs)) {
+  tri <- triangle_defs[i, ]
+  edges <- list(
+    sort(c(tri$v1, tri$v2)),
+    sort(c(tri$v2, tri$v3)),
+    sort(c(tri$v3, tri$v1))
+  )
+  for (edge in edges) {
+    key <- paste(edge, collapse = "-")
+    edge_to_tri_map[[key]] <- c(edge_to_tri_map[[key]], tri$triangle_id)
+  }
+}
+
+n_triangles <- nrow(triangle_defs)
+adj_list <- rep(list(c()), n_triangles)
+for (tri_pair in edge_to_tri_map) {
+  if (length(tri_pair) == 2) {
+    t1 <- tri_pair[1]; t2 <- tri_pair[2]
+    adj_list[[t1]] <- c(adj_list[[t1]], t2)
+    adj_list[[t2]] <- c(adj_list[[t2]], t1)
+  }
+}
+
+# 5. Balanced greedy graph coloring algorithm
+palette <- c("lightblue", "aliceblue", "lightsteelblue1", "lightgray")
+color_assignments <- character(n_triangles)
+color_counts <- stats::setNames(rep(0, length(palette)), palette)
+
+for (i in 1:n_triangles) {
+  neighbor_colors <- color_assignments[adj_list[[i]]]
+  available_colors <- palette[!palette %in% neighbor_colors]
+  
+  if (length(available_colors) > 0) {
+    least_used_color <- names(which.min(color_counts[available_colors]))
+    color_assignments[i] <- least_used_color
+    color_counts[least_used_color] <- color_counts[least_used_color] + 1
+  }
+}
+
+# 6. Prepare data for the "After" plot
+color_map <- tibble::tibble(triangle_id = 1:n_triangles, fill_color = color_assignments)
+triangles_data <- triangle_defs |>
+  tidyr::pivot_longer(cols = v1:v3, names_to = "vertex_order", values_to = "id") |>
+  dplyr::left_join(all_vertices, by = "id") |>
+  dplyr::left_join(color_map, by = "triangle_id")
+
+# 7. Create the "After" plot
+plot_with_triangulation <- ggplot2::ggplot(triangles_data, ggplot2::aes(x = x, y = y, group = triangle_id)) +
+  ggplot2::geom_polygon(ggplot2::aes(fill = fill_color), color = "black", alpha = 0.9) +
+  ggplot2::geom_path(data = boundary_data, ggplot2::aes(group = shape), color = "black", linewidth = 1.2) +
+  ggplot2::geom_point(data = all_vertices, ggplot2::aes(group = NULL), size = 3, color = "black") +
+  ggplot2::scale_fill_identity(guide = "none") +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(title = "Balanced Triangulation") +
+  ggplot2::theme_void() +
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 16))
+
+# 8. Display the plots side-by-side
+plot_without_triangulation + plot_with_triangulation
+```
+
+## Triangulation
+
+```{r}
+#| cache: true
+#| echo: false
+#| class: .r-stretch
+
+# 1. Define the grid resolution and torus shape
+nx <- 15 # Number of segments around the major circumference
+ny <- 10 # Number of segments around the minor circumference
+R <- 3   # Major radius (center of torus to center of tube)
+r <- 1   # Minor radius (radius of the tube)
+
+# 2. Generate the 3D vertex coordinates on the torus surface
+vertices_3d <- expand.grid(i = 0:nx, j = 0:ny) |>
+  mutate(
+    id = row_number(),
+    theta = (i / nx) * 2 * pi,
+    phi   = (j / ny) * 2 * pi,
+    x  = (R + r * cos(phi)) * cos(theta),
+    y  = (R + r * cos(phi)) * sin(theta),
+    z  = r * sin(phi)
+  )
+
+# 3. Generate the triangle connectivity
+i_indices <- c()
+j_indices <- c()
+k_indices <- c()
+
+for (i in 0:(nx - 1)) {
+  for (j in 0:(ny - 1)) {
+    v1_id <- vertices_3d$id[vertices_3d$i == i & vertices_3d$j == j]
+    v2_id <- vertices_3d$id[vertices_3d$i == i + 1 & vertices_3d$j == j]
+    v3_id <- vertices_3d$id[vertices_3d$i == i & vertices_3d$j == j + 1]
+    v4_id <- vertices_3d$id[vertices_3d$i == i + 1 & vertices_3d$j == j + 1]
+    
+    i_indices <- c(i_indices, v1_id - 1)
+    j_indices <- c(j_indices, v2_id - 1)
+    k_indices <- c(k_indices, v3_id - 1)
+    
+    i_indices <- c(i_indices, v2_id - 1)
+    j_indices <- c(j_indices, v4_id - 1)
+    k_indices <- c(k_indices, v3_id - 1)
+  }
+}
+
+# 4. Create the 3D mesh plot
+plot_ly(
+  x = vertices_3d$x, 
+  y = vertices_3d$y, 
+  z = vertices_3d$z,
+  i = i_indices, 
+  j = j_indices, 
+  k = k_indices,
+  type = "mesh3d",
+  facecolor = rep(c("lightblue", "white"), length.out = length(i_indices)),
+  showscale = FALSE
+) |> 
+  # FIX: Explicitly use plotly::layout to avoid namespace conflicts
+  plotly::layout(
+    title = "3D Triangulation of a Torus",
+    scene = list(
+      xaxis = list(title = "X", showticklabels = FALSE, backgroundcolor = "rgba(0,0,0,0)"),
+      yaxis = list(title = "Y", showticklabels = FALSE, backgroundcolor = "rgba(0,0,0,0)"),
+      zaxis = list(title = "Z", showticklabels = FALSE, backgroundcolor = "rgba(0,0,0,0)"),
+      aspectmode = "data"
+    )
+  )
+```
+
+
+## Triangulation
+
+```{r}
+#| cache: true
+# Grid dimensions for the triangulation
+nx <- 10
+ny <- 7
+
+# 1. Create the vertices of the grid
+vertices <- expand.grid(x = 0:nx, y = 0:ny) |>
+  mutate(id = row_number())
+
+# 2. Create the triangles
+triangles_data <- expand.grid(i = 0:(nx - 1), j = 0:(ny - 1)) |>
+  rowwise() |>
+  mutate(
+    v1 = vertices$id[vertices$x == i & vertices$y == j],
+    v2 = vertices$id[vertices$x == i + 1 & vertices$y == j],
+    v3 = vertices$id[vertices$x == i & vertices$y == j + 1],
+    v4 = vertices$id[vertices$x == i + 1 & vertices$y == j + 1],
+    triangle_definitions = list(tibble(
+      vertex_id = c(v1, v2, v3, v2, v4, v3)
+    ))
+  ) |>
+  ungroup() |>
+  select(triangle_definitions) |>
+  unnest(cols = c(triangle_definitions)) |>
+  mutate(triangle_id = rep(1:(nx * ny * 2), each = 3)) |>
+  left_join(vertices, by = c("vertex_id" = "id"))
+
+# 3. Create the plot with single-sided arrows
+ggplot(triangles_data, aes(x = x, y = y, group = triangle_id)) +
+  geom_polygon(aes(fill = factor((triangle_id %% 2))), color = "black", alpha = 0.7) +
+  geom_point(data = vertices, aes(group = NULL), size = 1.5, color = "black") +
+  
+  # --- Arrow and Label Annotations ---
+  # Label and arrow for top edge 'A'
+  annotate("text", x = nx / 2, y = ny + 0.8, label = "A", color = "dodgerblue", size = 5, fontface = "bold") +
+  annotate("segment", x = 1, xend = nx - 1, y = ny + 0.5, yend = ny + 0.5,
+           arrow = arrow(length = unit(0.3, "cm"), type = "closed"), color = "dodgerblue", linewidth = 1) +
+  
+  # Label and arrow for bottom edge 'A'
+  annotate("text", x = nx / 2, y = -0.8, label = "A", color = "dodgerblue", size = 5, fontface = "bold") +
+  annotate("segment", x = 1, xend = nx - 1, y = -0.5, yend = -0.5,
+           arrow = arrow(length = unit(0.3, "cm"), type = "closed"), color = "dodgerblue", linewidth = 1) +
+  
+  # Label and arrow for right edge 'B'
+  annotate("text", x = nx + 0.8, y = ny / 2, label = "B", color = "firebrick", size = 5, fontface = "bold") +
+  annotate("segment", x = nx + 0.5, xend = nx + 0.5, y = 1, yend = ny - 1,
+           arrow = arrow(length = unit(0.3, "cm"), type = "closed"), color = "firebrick", linewidth = 1) +
+           
+  # Label and arrow for left edge 'B'
+  annotate("text", x = -0.8, y = ny / 2, label = "B", color = "firebrick", size = 5, fontface = "bold") +
+  annotate("segment", x = -0.5, xend = -0.5, y = 1, yend = ny - 1,
+           arrow = arrow(length = unit(0.3, "cm"), type = "closed"), color = "firebrick", linewidth = 1) +
+
+  scale_fill_manual(values = c("lightblue", "white")) +
+  coord_fixed(clip = "off") +
+  labs(
+    title = "Triangulation of a Torus"
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.margin = unit(c(1, 1, 1, 1), "cm")
+  )
+```
+
+
+## Nerve {#nerve}
+
+:::{.incremental}
+-   For a finite collection of sets $\mathcal{F}$, the **nerve** Nrv $\mathcal{F}$ is an abstract simplicial complex.
+    -   A subcollection $X \subseteq \mathcal{F}$ forms a simplex in Nrv $\mathcal{F}$ if and only if the intersection of all sets in $X$ is non-empty ($\bigcap X \ne \emptyset$).
+-   **Nerve Theorem**: Let $\mathcal{F}$ be a finite collection of closed, convex sets in Euclidean space. Then the nerve of $\mathcal{F}$ and the union of the sets in $\mathcal{F}$ have the **same homotopy type**.
+    -   This also holds if $\bigcup\mathcal{F}$ is triangulable, all sets in $\mathcal{F}$ are closed, and all non-empty common intersections are contractible.
+:::
+
+:::{.notes}
+The Nerve Lemma tells us that if our sets are "well-behaved" (e.g., closed and convex), the nerve we constructed has the same topological shape (homotopy type) as the union of the original sets.
+
+It allows us to study the topology of a complex shape ($\cup F$) by analyzing a much simpler combinatorial object (Nrv $F$)
+:::
+
+## Nerve 
+
+:::{.incremental}
+- Consider a collection of four sets, $F={A,B,C,D}$. Their intersections are defined as follows:
+    - Three sets overlap: $A$, $B$, and $C$ all share a common region $A\cap B \cap C \neq \emptyset$.
+    - Some pairs overlap: $D$ intersects with $B$ and $C$.
+    - Some pairs do not: $D$ does not intersect with $A$.
+:::
+
+## Nerve 
+
+```{r}
+
+# --- 1. Define a Single, Unified Coordinate System ---
+
+# This data frame will now drive the locations for BOTH plots.
+# The `size` column is for plot1, `v_size` is for plot2.
+node_data <- tibble(
+  label = c("A", "B", "C", "D"),
+  x = c(0, -1.2, 1.2, 0),
+  y = c(1.5, -0.5, -0.5, -2.0),
+  set_color = c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c"),
+  vertex_size = 15
+)
+
+# Define plot boundaries to be used for both plots
+x_limits <- c(-3, 3)
+y_limits <- c(-3, 3)
+
+
+# --- 2. Create Plot 1: Collection of Sets ---
+
+plot1 <- ggplot(node_data, aes(x = x, y = y)) +
+  geom_point(aes(fill = set_color, size = vertex_size), shape = 21, color = "black") +
+  geom_text(aes(label = label), color = "black", fontface = "bold", size = 5) +
+  scale_fill_identity() +
+  scale_size_identity() +
+  # Enforce the same limits on both plots
+  xlim(x_limits) +
+  ylim(y_limits) +
+  coord_fixed() +
+  labs(title = "Collection of Sets (F)") +
+  theme_void(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+
+# --- 3. Create Plot 2: Resulting Nerve ---
+
+# Define triangle and edge data using the unified node_data coordinates
+triangle_fill_data <- node_data |> filter(label %in% c("A", "B", "C"))
+
+nerve_edges <- tibble(
+  x_from = c("A", "A", "B", "B", "C"),
+  x_to   = c("B", "C", "C", "D", "D")
+) |>
+  # Join to get coordinates for start and end points
+  left_join(node_data |> select(label, x, y), by = c("x_from" = "label")) |>
+  left_join(node_data |> select(label, xend = x, yend = y), by = c("x_to" = "label")) |>
+  # Define style for each edge
+  mutate(
+    color = ifelse(x_from %in% c("A", "B", "C") & x_to %in% c("A", "B", "C"), "#1f78b4", "gray50"),
+    linewidth = ifelse(x_from %in% c("A", "B", "C") & x_to %in% c("A", "B", "C"), 2, 1)
+  )
+
+plot2 <- ggplot() +
+  # 1. Filled triangle background
+  geom_polygon(data = triangle_fill_data, aes(x = x, y = y), fill = "#a6cee3", alpha = 0.8) +
+  # 2. Edges
+  geom_segment(data = nerve_edges, aes(x = x, y = y, xend = xend, yend = yend,
+                                       color = color, linewidth = linewidth)) +
+  # 3. Vertices (using same node_data)
+  # geom_point(data = node_data, aes(x = x, y = y, size = vertex_size),
+  #            shape = 21, fill = "gray80", color = "black") +
+  geom_point(data = node_data, aes(x = x, y = y, size = vertex_size, fill = set_color),
+             shape = 21, color = "black") +
+  # 4. Labels
+  geom_text(data = node_data, aes(x = x, y = y, label = label),
+            color = "black", fontface = "bold", size = 5) +
+  scale_color_identity() +
+  scale_fill_identity() +
+  scale_linewidth_identity() +
+  scale_size_identity() +
+  # Enforce the same limits on both plots
+  xlim(x_limits) +
+  ylim(y_limits) +
+  coord_fixed() +
+  labs(title = "Resulting Nerve(F)") +
+  theme_void(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Display the first plot
+plot1
+```
+
+## Nerve 
+
+```{r}
+plot2
+```
+
+:::{.notes}
+Vertices (0-simplices): We start with four vertices, one for each set: $A$, $B$, $C$, $D$.
+
+Edges (1-simplices): We draw an edge for every non-empty pairwise intersection.
+
+The pairs $\{A,B\}$, $\{A,C\}$, and $\{B,C\}$ all have edges.
+The pairs $\{B,D\}$ and $\{C,D\}$ also have edges.
+Since $A\cap D= \emptyset$, there is no edge between vertices $A$ and $D$.
+Faces (2-simplices): We fill in a triangle for any three sets that have a common intersection.
+
+Since $A\cap B \cap C \neq \emptyset$, the vertices $A$, $B$, $C$ form a filled triangle. This is the 2-simplex $\{A,B,C\}$.
+Even though D connects to B and C, we assume $B \cap C\cap D=\emptyset$, so $\{B,C,D\}$ is not a filled triangle. It remains a hollow "V" shape attached to the main triangle.
+:::
+
+<!-- ## Delaunay Complexes {#delaunay-complexes .smaller} -->
+
+<!-- -   A geometric construction related to Voronoi diagrams. -->
+<!-- -   **Inversion / Stereographic Projection**: Geometric transformations used to provide alternative views and proofs for Voronoi diagrams and Delaunay complexes, especially in relating them to convex hulls in higher dimensions. -->
+<!-- -   **Voronoi Diagram**: For a finite set of points $S \subseteq \mathbb{R}^d$, the Voronoi cell $V_u$ of a point $u \in S$ is the set of points $x \in \mathbb{R}^d$ for which $u$ is the closest point in $S$. -->
+<!--     -   **Weighted Voronoi diagrams** (power diagrams) are defined using weighted squared distance (power). -->
+<!-- -   **Delaunay Triangulation/Complex**: Isomorphic to the **nerve of the Voronoi diagram**. A subset $\sigma \subseteq S$ forms a simplex in the Delaunay complex iff the intersection of the Voronoi cells $V_u$ for all $u \in \sigma$ is non-empty. **Weighted Delaunay complexes** also exist. -->
+
+
+## Voronoi Diagram
+
+:::{.fragment}
+-   A **Voronoi Cell ($V_u$)** is the region of points closer to a site $u \in S$ than to any other site. 
+
+$$
+V_u = \{x \in \mathbb{R}^d \mid \|x - u\| \le \|x - v\|, \forall v \in S\}
+$$
+
+:::
+:::{.fragment}
+-   Each inequality $\|x - u\| \le \|x - v\|$ defines a half-space. The cell $V_u$ is the intersection of these half-spaces, which guarantees it is always a **convex polygon** (in 2D).
+:::
+:::{.fragment}
+-   The **Voronoi Diagram** is the collection of all cells $\{V_u\}_{u \in S}$, which creates a complete partition (or tessellation) of the space.
+:::
+
+## Voronoi Diagram
+
+```{r}
+set.seed(42) # for reproducibility
+sites <- tibble(
+  x = runif(15, 0, 10),
+  y = runif(15, 0, 10),
+  id = 1:15
+)
+
+ggplot(sites, aes(x, y)) +
+  geom_voronoi_tile(aes(fill = factor(id), group = -1L), alpha = 0.5, color = 'black') +
+  geom_point(size = 3) +
+  theme_void(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "none"
+  ) +
+  coord_fixed()
+```
+
+## Delaunay Complexes
+
+:::{.fragment}
+- The **Delaunay Complex** is the **dual** of the Voronoi diagram. More formally, it is the **nerve** of the collection of Voronoi cells.
+:::
+
+:::{.fragment}
+- **The Rule**: A set of sites $\sigma \subseteq S$ forms a simplex in the Delaunay complex if and only if their corresponding Voronoi cells have a non-empty intersection:
+    $$\bigcap_{u \in \sigma} V_u \ne \emptyset$$
+:::
+
+:::{.fragment}
+- **Edges**: Two sites are connected if their Voronoi cells share an edge.
+- **Triangles**: Three sites form a triangle if their cells meet at a single vertex.
+:::
+
+:::{.notes}
+-   **Duality**: The Delaunay complex is the dual of the Voronoi diagram, meaning that the vertices of the Delaunay complex correspond to the Voronoi cells, and vice versa.
+
+- The rule is simple:
+    1.  Place a new **vertex** inside each original **face** (or region).
+    2.  Connect two new vertices with an **edge** if their faces share a border.
+    
+- Applying this to our diagram:
+    - The Voronoi **cells** are the faces. The original **sites** are the new vertices.
+    - We connect sites whose cells are neighbors. The result is the Delaunay triangulation.
+:::
+
+## Delaunay Complexes
+
+```{r}
+ggplot(sites, aes(x, y)) +
+  # Voronoi diagram in the background
+  geom_voronoi_tile(aes(fill = factor(id), group = -1L), alpha = 0.2, color = 'gray') +
+  # Delaunay triangulation on top
+  geom_delaunay_segment(color = "#1f78b4", linewidth = 1.2) +
+  geom_point(size = 3) +
+  labs(title = "Delaunay Triangulation (Dual to Voronoi)") +
+  theme_void(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "none"
+  ) +
+  coord_fixed()
+```
+
+<!-- ## Delaunay Complexes -->
+
+<!-- :::{.fragment} -->
+<!-- - A defining feature of the Delaunay triangulation is the **empty circle property**, which makes it incredibly useful in practice. -->
+<!-- ::: -->
+
+<!-- :::{.fragment} -->
+<!-- - **The Rule**: The unique circle that passes through the three vertices of any triangle in the triangulation (its *circumcircle*) will contain no other site from the set in its interior. -->
+<!-- ::: -->
+
+<!-- :::{.fragment} -->
+<!-- - This property ensures that the triangles are as "well-behaved" or "fat" as possible, avoiding long, skinny triangles where possible. -->
+<!-- ::: -->
+
+<!-- ## Delaunay Complexes -->
+
+<!-- ```{r} -->
+<!-- set.seed(42) -->
+<!-- sites <- tibble( -->
+<!--   x = runif(15, 0, 10), -->
+<!--   y = runif(15, 0, 10), -->
+<!--   id = 1:15 -->
+<!-- ) -->
+
+<!-- # Manually pick one triangle to highlight -->
+<!-- one_triangle <- sites |> filter(id %in% c(1, 5, 10)) -->
+
+<!-- # --- NEW: Manually calculate the circumcenter and radius --- -->
+<!-- # This part is now necessary because geom_circumcircle was removed. -->
+<!-- # We extract the three points of the triangle -->
+<!-- p1 <- one_triangle[1, ] -->
+<!-- p2 <- one_triangle[2, ] -->
+<!-- p3 <- one_triangle[3, ] -->
+
+<!-- # Solve the linear system for the circumcenter (x0, y0) -->
+<!-- a <- 2 * (p1$x - p2$x) -->
+<!-- b <- 2 * (p1$y - p2$y) -->
+<!-- c <- 2 * (p2$x - p3$x) -->
+<!-- d <- 2 * (p2$y - p3$y) -->
+
+<!-- s1 <- p1$x^2 + p1$y^2 - p2$x^2 - p2$y^2 -->
+<!-- s2 <- p2$x^2 + p2$y^2 - p3$x^2 - p3$y^2 -->
+
+<!-- # Cramer's rule to find the circumcenter coordinates -->
+<!-- x0 <- (s1 * d - s2 * b) / (a * d - b * c) -->
+<!-- y0 <- (a * s2 - c * s1) / (a * d - b * c) -->
+
+<!-- # Calculate the radius (distance from center to any vertex) -->
+<!-- r <- sqrt((p1$x - x0)^2 + (p1$y - y0)^2) -->
+
+<!-- # Create a data frame for the circle -->
+<!-- circum_data <- tibble(x0 = x0, y0 = y0, r = r) -->
+<!-- # --- End of new calculation section --- -->
+
+
+<!-- ggplot(sites, aes(x, y)) + -->
+<!--   geom_delaunay_segment(color = "gray80") + -->
+<!--   # Highlight the specific triangle's edges -->
+<!--   geom_delaunay_segment(data = one_triangle, color = "#1f78b4", linewidth = 1.5) + -->
+<!--   # FIX: Use the correct geom_circle() function with the calculated data -->
+<!--   geom_circle( -->
+<!--     data = circum_data, -->
+<!--     aes(x0 = x0, y0 = y0, r = r), -->
+<!--     color = "firebrick", linewidth = 1.2, inherit.aes = FALSE -->
+<!--   ) + -->
+<!--   # Highlight the triangle's vertices -->
+<!--   geom_point(size = 3) + -->
+<!--   geom_point(data = one_triangle, size = 4, color = "firebrick") + -->
+<!--   labs(title = "The Empty Circle Property") + -->
+<!--   theme_void(base_size = 14) + -->
+<!--   theme(plot.title = element_text(hjust = 0.5, face = "bold")) + -->
+<!--   coord_fixed() -->
+<!-- ``` -->
+
+<!-- ## Alpha Complexes {#alpha-complexes .smaller} -->
+
+<!-- -   A family of subcomplexes of the Delaunay complex, parameterized by a radius $r \ge 0$. -->
+<!-- -   For a set of points $S$, the Alpha complex Alpha(r) is isomorphic to the **nerve of the collection of regions $R_u(r) = B_u(r) \cap  V_u$**, where $B_u(r)$ is the closed ball with center $u$ and radius $r$, and $V_u$ is the Voronoi cell of $u$. -->
+<!--     -   Alpha complexes have canonical geometric realizations if $S$ is in general position. -->
+<!-- -   **Čech Complexes**: Defined as the nerve of a collection of balls $B_x(r)$ for $x \in S$. Alpha(r) $\subseteq$ Čech(r). -->
+<!-- -   **Filtration**: As the radius $r$ increases continuously, the alpha complexes form a **nested sequence** (a filtration) of simplicial complexes: $\emptyset = K_0 \subseteq K_1 \subseteq \dots \subseteq K_m = \text{Delaunay}$. This is fundamental for persistent homology. -->
+<!-- -   **Vietoris-Rips Complexes**: For $S \subseteq \mathbb{R}^d$, Vietoris-Rips(r) = {$\sigma \subseteq S \mid \text{diam}(\sigma) \le 2r$}. Čech(r) $\subseteq$ Vietoris-Rips(r), and Vietoris-Rips(r) $\subseteq$ Čech($\sqrt{2}r$). -->
+
+## The Čech Complex {#alpha-complexes}
+
+:::{.incremental}
+- A simplex is included if the balls of radius r centered at its points have a common intersection.
+- Formally, it is the nerve of the collection of balls $B_x(r)$ for all points $x$ in the dataset.
+- Challenge: Computationally expensive, as it requires checking for the intersection of many combinations of balls. 
+:::
+
+:::{.fragment}
+$$
+\text{Čech}(r) = \{ \sigma \subseteq S \mid \bigcap_{x \in \sigma} B_x(r) \neq \emptyset \} 
+$$
+:::
+
+:::{.notes}
+- Intuition: Imagine placing a ball of radius r around each point. You draw a triangle between three points only if you can find a single spot that's inside all three of their balls. An edge is drawn if two balls overlap.
+:::
+
+## The Vietoris-Rips (VR) Complex
+
+:::{.incremental}
+-   A simplex $\sigma$ is included if every pair of points in $\sigma$ is no more than a distance of $2r$ apart.
+-   **Advantage**: Much faster to compute than the Čech complex, as it only requires checking pairwise distances.
+:::
+
+:::{.fragment}
+$$
+\text{VR}(r) = \{ \sigma \subseteq S \mid \text{diam}(\sigma) \le 2r \}
+$$
+:::
+
+:::{.notes}
+-   **Intuition**: Think of it as a "proximity" rule. If every point in a small group is "close" to every other point in that same group, connect them all up. For example, if three points are all mutually close to each other, you don't just draw the three edges between them, you also fill in the triangle.
+:::
+
+## The Alpha Complex
+
+:::{.incremental}
+-   A subcomplex of the **Delaunay triangulation** that filters simplices based on a radius parameter $r$.
+-   It provides a more geometrically accurate structure than the VR or Čech complexes.
+-   A simplex $\sigma$ is included if the intersection of balls of radius $r$ with their corresponding **Voronoi cells** is non-empty.
+    -   These regions are defined as $R_u(r) = B_u(r) \cap V_u$ for each vertex $u$.
+-   As $r$ increases, more simplices are included, until the Alpha complex becomes the full Delaunay triangulation.
+:::
+
+:::{.notes}
+-   Need ball intersection, and cell neighbors
+-   **Intuition**: Think of the Alpha complex as a "Goldilocks" version that sits between the fast VR complex and the accurate but slow Čech complex. The Voronoi cells act as powerful constraints.
+-   **Example**: Three points lying close together on a straight line might form a triangle in a VR complex. This is often undesirable. The Alpha complex prevents this, because the Voronoi cells for those three points do not meet at a common vertex, meaning their intersection regions ($R_u(r)$) can't have a common point.
+:::
+
+## Comparing the Complexes
+
+:::{.fragment}
+-   **Inclusion Hierarchy**: For a given radius $r$, the complexes are nested within each other. The Alpha complex is the smallest and the Vietoris-Rips is the largest.
+:::
+
+:::{.fragment}
+$$
+\text{Alpha}(r) \subseteq \text{Čech}(r) \subseteq \text{Vietoris-Rips}(r)
+$$
+:::
+
+<!-- :::{.incremental} -->
+<!-- -   **Vietoris-Rips**: Fastest to compute, but can be a rough approximation. -->
+<!-- -   **Čech**: The "gold standard" for matching the topology of the union of balls, but slow to compute. -->
+<!-- -   **Alpha**: A good compromise. Faster than Čech and more geometrically precise than Vietoris-Rips. -->
+<!-- ::: -->
+
+## Comparison
+
+```{r}
+#| class: .r-stretch
+
+# --- Helper Function: Calculate Circumradius ---
+circumradius <- function(pts) {
+  a <- as.numeric(dist(pts[c(1, 2), ]))
+  b <- as.numeric(dist(pts[c(1, 3), ]))
+  c <- as.numeric(dist(pts[c(2, 3), ]))
+  s <- (a + b + c) / 2
+  area <- sqrt(s * (s - a) * (s - b) * (s - c))
+  if (is.nan(area) || abs(area) < 1e-9) return(Inf)
+  return((a * b * c) / (4 * area))
+}
+
+# --- 1. Point and Parameter Setup ---
+# A corrected, cohesive point set to robustly show all differences.
+points_df <- tibble::tribble(
+  ~x,     ~y,    ~name,
+  # For VR > Cech (a very wide triangle)
+   0.0,    0.0,    "A",
+   1.95,   0.0,    "B",
+   0.975,  0.2,    "C",
+  # For Cech > Alpha (a Delaunay violation, positioned nearby)
+   2.0,    2.9,    "D",
+   1.22,   1.55,   "E",
+   2.78,   1.55,   "F",
+   2.0,    2.0,    "G"
+) |>
+  dplyr::mutate(id = dplyr::row_number())
+
+r <- 1.0
+
+# --- 2. Geometric Computations ---
+delaunay_info <- deldir::deldir(points_df$x, points_df$y, suppressMsge = TRUE)
+delaunay_edges <- delaunay_info$delsgs |> dplyr::transmute(p1 = ind1, p2 = ind2)
+delaunay_tris <- deldir::triang.list(delaunay_info) |>
+  purrr::map_dfr(~tibble::tibble(p1 = .x$ptNum[1], p2 = .x$ptNum[2], p3 = .x$ptNum[3]))
+
+all_edges <- as_tibble(t(combn(points_df$id, 2))) |> set_names("p1", "p2")
+all_tris <- as_tibble(t(combn(points_df$id, 3))) |> set_names("p1", "p2", "p3")
+dist_mat <- as.matrix(dist(points_df[, c("x", "y")]))
+
+# --- 3. Complex Calculation ---
+
+# -- Vietoris-Rips Complex --
+vr_edges <- all_edges |> dplyr::filter(dist_mat[cbind(p1, p2)] <= 2 * r)
+vr_tris <- all_tris |>
+  dplyr::filter(
+    dist_mat[cbind(p1, p2)] <= 2 * r &
+    dist_mat[cbind(p1, p3)] <= 2 * r &
+    dist_mat[cbind(p2, p3)] <= 2 * r
+  )
+
+# -- Cech Complex --
+cech_edges <- vr_edges
+cech_tris_list <- list()
+for (i in 1:nrow(all_tris)) {
+  p_indices <- as.numeric(all_tris[i, ])
+  pts_matrix <- as.matrix(points_df[p_indices, c("x", "y")])
+  if (circumradius(pts_matrix) <= r) {
+    cech_tris_list[[length(cech_tris_list) + 1]] <- all_tris[i, ]
+  }
+}
+cech_tris <- dplyr::bind_rows(cech_tris_list)
+
+# -- Alpha Complex --
+alpha_edges <- delaunay_edges |> dplyr::filter(dist_mat[cbind(p1, p2)] <= 2 * r)
+alpha_tris <- dplyr::inner_join(cech_tris, delaunay_tris, by = c("p1", "p2", "p3"))
+
+
+# --- 4. Plotting ---
+create_complex_plot <- function(title, edge_df, tri_df) {
+  edge_data <- edge_df |>
+    tidyr::pivot_longer(cols = c(p1, p2), values_to = "id") |>
+    dplyr::left_join(points_df, by = "id") |>
+    dplyr::mutate(edge_id = rep(1:nrow(edge_df), each = 2))
+
+  tri_data <- tri_df |>
+    dplyr::select(p1, p2, p3) |>
+    tidyr::pivot_longer(cols = c(p1, p2, p3), values_to = "id") |>
+    dplyr::left_join(points_df, by = "id") |>
+    dplyr::mutate(tri_id = rep(1:nrow(tri_df), each = 3))
+
+  ggplot2::ggplot(points_df, ggplot2::aes(x = x, y = y)) +
+    ggforce::geom_circle(ggplot2::aes(x0 = x, y0 = y, r = r), color = "gray80", linetype = "dashed") +
+    ggplot2::geom_polygon(data = tri_data, ggplot2::aes(group = tri_id), fill = "skyblue", alpha = 0.6) +
+    ggplot2::geom_line(data = edge_data, ggplot2::aes(group = edge_id), color = "black", linewidth = 1) +
+    ggplot2::geom_point(size = 3.5, color = "#e41a1c") +
+    ggplot2::geom_text(ggplot2::aes(label = name), nudge_y = 0.25, size = 3.5, fontface = "bold") +
+    ggplot2::coord_fixed(xlim = c(-0.5, 3.5), ylim = c(-0.5, 3.5)) +
+    ggplot2::theme_void() +
+    ggplot2::theme(
+        legend.position = "none",
+        plot.title = ggplot2::element_text(hjust = 0.5, face = "bold", size = 16)
+    ) +
+    ggplot2::labs(title = title)
+}
+
+plot_vr <- create_complex_plot("Vietoris-Rips Complex", vr_edges, vr_tris)
+plot_cech <- create_complex_plot("Cech Complex", cech_edges, cech_tris)
+plot_alpha <- create_complex_plot("Alpha Complex", alpha_edges, alpha_tris)
+
+# --- 5. Combine and Display Plots ---
+plot_alpha + plot_cech + plot_vr
+
+```
+
+::: {.notes}
+Here's a breakdown of how these plots illustrate the key differences between the Alpha, Čech, and Vietoris-Rips complexes. The fundamental relationship is that for a given point set and radius $r$, the complexes are nested within each other: $\text{Alpha} \subseteq \text{Čech} \subseteq \text{Vietoris-Rips}$.
+
+**1. Vietoris-Rips vs. Čech Complex**
+
+* **The Rule:** A triangle (2-simplex) exists in the Vietoris-Rips (VR) complex if all three of its edges have a length less than or equal to $2r$. The Čech complex has a stricter requirement: a triangle exists only if the balls of radius $r$ centered at each vertex have a common intersection. This is equivalent to the triangle's circumradius being less than or equal to $r$.
+* **The Example:** Look at triangle `ABC`. It is intentionally constructed to be wide and flat.
+    * In the **Vietoris-Rips plot**, `ABC` is filled in because all its pairwise distances are less than $2r$.
+    * In the **Čech plot**, `ABC` is *not* filled in. This is because its circumradius is much larger than $r$, so the three balls centered at A, B, and C do not have a common intersection. This single triangle demonstrates that the Čech complex can be a strict subset of the VR complex.
+
+**2. Čech vs. Alpha Complex**
+
+* **The Rule:** The Alpha complex is a subcomplex of the Delaunay triangulation. For a triangle to be included, it must first meet the Čech condition (circumradius $\le r$), *and* its circumcircle must be "empty," meaning it contains no other points from the set.
+* **The Example:** Now, look at triangle `DEF` and the nearby point `G`.
+    * In the **Čech plot**, triangle `DEF` is filled in. It was designed so its circumradius is less than or equal to $r$.
+    * In the **Alpha plot**, `DEF` is *not* filled in. This is because point `G` was deliberately placed inside the circumcircle of `DEF`. This violates the "empty circumcircle" rule of the Delaunay triangulation. Therefore, even though it satisfies the Čech condition, it is excluded from the Alpha complex.
+
+:::
+
+# Euler Characteristic {#euler-characteristic .smaller}
+
+## Euler Characteristic 
+
+:::{.incremental}
+-   Defined for a simplicial complex K as the **alternating sum of the number of simplices in each dimension**.
+    -   $\chi(K) = \sum_{p \ge 0} (-1)^p n_p$, where $n_p$ is the number of $p$-simplices (e.g., vertices, edges, triangles).
+-   **Euler-Poincaré Theorem**: The Euler characteristic is also the **alternating sum of its Betti numbers**.
+    -   $\chi(K) = \sum_{p \ge 0} (-1)^p \beta_p$.
+    -   $\beta_p$ is the rank of the $p$-th homology group, representing the number of $p$-dimensional "holes".
+-   The Euler characteristic does not depend on the specific triangulation chosen for a topological space, but is an invariant of the space itself.
+:::
+
+:::{.notes}
+**Betti numbers ($\beta_p$)** provide a summary of a shape by counting its "holes" in each dimension.
+
+* **$\beta_0$**: Counts the number of **connected components** or clusters. A dataset with two separate clusters has $\beta_0 = 2$. A circle has 1. 
+
+* **$\beta_1$**: Counts **1-dimensional loops** or tunnels. The main hole through a donut is a $\beta_1$ feature.
+Torus has $\beta_0 = 1$ a single connected object. $\beta_1 = 2$ two loops. $\beta_2 = 1$ hollow surface encloses single 2-d void. 
+
+* **$\beta_2$**: Counts **2-dimensional voids** or cavities. The hollow interior of a sphere is a $\beta_2$ feature.
+:::
+
+
+<!-- ## Example in R -->
+
+<!-- ```{r} -->
+<!-- # ---- 1. Define the Simplicial Complex ---- -->
+<!-- # We'll create a hollow tetrahedron by defining its four triangular faces. -->
+<!-- # The simplex_tree object will automatically infer the edges and vertices. -->
+<!-- st <- simplex_tree() -->
+<!-- st$insert(list( -->
+<!--   c(1, 2, 3), -->
+<!--   c(1, 2, 4), -->
+<!--   c(1, 3, 4), -->
+<!--   c(2, 3, 4) -->
+<!-- )) -->
+
+<!-- # ---- 2. Method 1: Alternating Sum of Simplices ---- -->
+<!-- # Get the number of simplices in each dimension (n_p) -->
+<!-- n0 <- length(st$vertices) -->
+<!-- n1 <- nrow(st$edges) -->
+<!-- n2 <- nrow(st$triangles) -->
+<!-- euler_from_simplices <- n0 - n1 + n2 -->
+
+<!-- # ---- 3. Method 2: Euler-Poincaré Formula (Betti Numbers) ---- -->
+<!-- # Get the Betti numbers (beta_p) -->
+<!-- betti_numbers <- st$betti() -->
+<!-- b0 <- betti_numbers[1] # beta_0 = connected components -->
+<!-- b1 <- betti_numbers[2] # beta_1 = loops/tunnels -->
+<!-- b2 <- betti_numbers[3] # beta_2 = voids/cavities -->
+<!-- euler_from_betti <- b0 - b1 + b2 -->
+
+<!-- # ---- 4. Display the Results ---- -->
+<!-- # We create a table to clearly show both calculations. -->
+<!-- results_df <- data.frame( -->
+<!--   "Calculation Method" = c("Sum of Simplices", "Sum of Betti Numbers"), -->
+<!--   "Formula" = c("n_0 - n_1 + n_2", "beta_0 - beta_1 + beta_2"), -->
+<!--   "Values" = c(paste(n0, "-", n1, "+", n2), paste(b0, "-", b1, "+", b2)), -->
+<!--   "Result (chi)" = c(euler_from_simplices, euler_from_betti) -->
+<!-- ) -->
+
+<!-- # Print the results in a clean table format -->
+<!-- kable(results_df, -->
+<!--   caption = "Calculating the Euler Characteristic (χ) of a Hollow Tetrahedron" -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- library(simplextree) -->
+
+<!-- st <- simplex_tree() -->
+<!-- st$insert(list( -->
+<!--   c(1, 2, 3), -->
+<!--   c(1, 2, 4), -->
+<!--   c(1, 3, 4), -->
+<!--   c(2, 3, 4) -->
+<!-- )) -->
+
+<!-- # Get the count of simplices for each dimension -->
+<!-- n0 <- length(st$vertices) -->
+<!-- n1 <- nrow(st$edges) -->
+<!-- n2 <- nrow(st$triangles) -->
+
+<!-- # Calculate the Euler characteristic -->
+<!-- euler_char <- n0 - n1 + n2 -->
+
+<!-- # The vertices of a regular tetrahedron in 3D space -->
+<!-- points <- matrix( -->
+<!--   c(1,  2,  3, -->
+<!--     1, 2, 4, -->
+<!--     1, 3, 4, -->
+<!--     2, 3, 4), -->
+<!--   ncol = 3, -->
+<!--   byrow = TRUE -->
+<!-- ) -->
+
+<!-- # Call the correct function: vietoris_rips() -->
+<!-- ph_tda <- ripsDiag(X = points, maxdimension = 2, maxscale = 3, printProgress = FALSE) -->
+
+<!-- # The persistence diagram is in the $diagram slot -->
+<!-- ph_diagram_tda <- ph_tda$diagram -->
+
+<!-- print("Persistence Diagram from TDA:") -->
+<!-- print(ph_diagram_tda) -->
+
+
+<!-- ``` -->
+
+# Homology (Chapter IV) {#homology-chapter-iv}
+
+A mathematical formalism for quantitatively describing the connectivity of a space, particularly its "holes".
+
+
+## Homology Groups {#homology-groups .smaller}
+
+-   **Chain Complex**: A sequence of chain groups $C_p$ and boundary homomorphisms $\partial_p : C_p \to C_{p-1}$ such that the composition of any two consecutive boundary maps is zero ($\partial_{p-1} \partial_p = 0$).
+-   **Chains ($C_p$)**: Formal sums of p-simplices, $c = \sum a_i \sigma_i$. Coefficients $a_i$ are often from $\mathbb{Z}_2$ (modulo 2), meaning $a_i \in \{0, 1\}$. With $\mathbb{Z}_2$ coefficients, a chain can be viewed as a set of $p$-simplices. The $p$-chains form a group $(C_p, +)$.
+-   **Boundary Map ($\partial_p$)**: A homomorphism $\partial_p : C_p(K) \to C_{p-1}(K)$ that maps a $p$-simplex $\sigma = [u_0, \dots, u_p]$ to the sum of its $(p-1)$-faces: $\partial_p \sigma = \sum_{j=0}^p [u_0, \dots, \hat{u}_j, \dots, u_p]$.
+-   **Cycles ($Z_p$) and Boundaries ($B_p$)**:
+    -   A **$p$-cycle** is a $p$-chain $c$ with an empty boundary ($\partial_p c = 0$). The group of $p$-cycles $Z_p = \ker \partial_p$ is a subgroup of $C_p$.
+    -   A **$p$-boundary** is a $p$-chain $c$ that is the boundary of some $(p+1)$-chain $d$ ($c = \partial_{p+1} d$). The group of $p$-boundaries $B_p = \text{im } \partial_{p+1}$ is a subgroup of $C_p$.
+    -   The **Fundamental Lemma of Homology** states $\partial_p \partial_{p+1} d = 0$, which implies that every boundary is a cycle, so $B_p \subseteq Z_p$.
+-   **Homology Group ($H_p$)**: The $p$-th homology group is the quotient group $H_p(K) = Z_p(K) / B_p(K)$. Its elements are homology classes.
+-   **Betti Number ($\beta_p$)**: The rank of the $p$-th homology group, $\beta_p = \text{rank } H_p(K)$. For $\mathbb{Z}_2$ coefficients, $\beta_p = \text{rank } Z_p - \text{rank } B_p$. $\beta_p$ counts the number of $p$-dimensional holes.
+
+## Exact Sequences {#exact-sequences .smaller}
+
+-   A sequence of vector spaces (or groups) and homomorphisms $\dots \xrightarrow{f_{i-1}} V_i \xrightarrow{f_i} V_{i+1} \xrightarrow{f_{i+1}} \dots$ is **exact** at $V_{i+1}$ if $\text{im } f_i = \ker f_{i+1}$.
+-   Long exact sequences are powerful tools for relating different homology groups.
+-   **Mayer-Vietoris Sequence**: A specific long exact sequence that relates the homology groups of a space $K = K' \cup K''$ to the homology groups of $K'$, $K''$, and their intersection $A = K' \cap  K''$.
+    -   $\dots \to H_p(A) \to H_p(K') \oplus H_p(K'') \to H_p(K) \to H_{p-1}(A) \to \dots$.
+    -   Provides a divide-and-conquer approach to computing homology.
+
+
+
+# Morse Functions (Chapter VI) {#morse-functions-chapter-vi}
+
+Real-valued functions used to analyze the topology of manifolds.
+
+## Generic Smooth Functions {#generic-smooth-functions .smaller}
+
+-   Smooth functions are preferred over general continuous functions for analysis.
+-   **Critical Point**: A point $x \in M$ where the derivative (gradient) $Df_x$ of $f: M \to \mathbb{R}$ is the zero map. In local coordinates, all partial derivatives vanish.
+-   **Non-degenerate Critical Point**: A critical point $x$ where the Hessian matrix $H(x)$ (matrix of second partial derivatives) is non-singular (det $H(x) \ne 0$).
+    -   The **index** of a non-degenerate critical point is the number of minus signs in the quadratic polynomial representation given by the Morse Lemma (or number of negative eigenvalues of its Hessian).
+-   **Morse Function**: A smooth function $f: M \to \mathbb{R}$ such that (i) all its critical points are non-degenerate, and (ii) all critical points have distinct function values.
+
+## Handle Decomposition & Morse Complex {#handle-decomposition-morse-complex .smaller}
+
+-   **Attaching Handles**: When increasing the threshold of a Morse function $f$, the homotopy type of the sublevel set $M_a = f^{-1}(-\infty, a]$ changes only when $a$ passes a critical value. This change is homotopically equivalent to attaching a $q$-handle, where $q$ is the index of the critical point.
+-   **Morse-Smale Function**: A Morse function whose stable and unstable manifolds intersect transversally.
+-   **Morse-Smale Complex**: For a Morse-Smale function, its vertices are the critical points of $f$. Cells are components of intersections of stable and unstable manifolds. Edges, for instance, are isolated integral lines connecting critical points whose indices differ by one. This complex can be used to compute **Floer homology**.
+
+
+## Piecewise Linear (PL) Functions {#piecewise-linear-pl-functions .smaller}
+
+-   Analogous concepts for functions on triangulated manifolds where the function is linear on each simplex.
+-   **Lower Star / Lower Link**:
+    -   **Lower Star (St⁻$u_i$)**: For a vertex $u_i$ in a PL function $f$ (where vertices are ordered by function value), St⁻$u_i$ consists of all simplices $\sigma$ in St $u_i$ for which $u_i$ is the vertex with the maximum function value.
+    -   **Lower Link (Lk⁻$u_i$)**: Simplices in Lk $u_i$ whose vertices all have function values less than $f(u_i)$.
+-   **PL Critical Vertex**: A vertex $u_i$ is a simple PL critical vertex of index $q$ if its lower link Lk⁻$u_i$ has the reduced homology of a $(q-1)$-sphere (i.e., $\tilde{\beta}_{q-1}(\text{Lk}^-u_i)=1$ and other reduced Betti numbers are 0).
+-   **PL Morse Function**: A PL function where each vertex is either PL regular (lower link homologically trivial) or simple PL critical, and all vertices have distinct function values.
+
+## Reeb Graphs {#reeb-graphs .smaller}
+
+-   Visualizes the evolution of the **connected components of level sets** of a function $f: X \to \mathbb{R}$.
+-   The Reeb graph $R(f)$ is the quotient space where points in $X$ are equivalent if they belong to the same connected component of the same level set.
+-   Nodes in the Reeb graph typically correspond to critical points of $f$ where the topology of the level set components changes (merge or split).
+-   If $X$ is contractible (e.g., a cube in medical imaging), $R(f)$ is a tree (called a contour tree).
+-   Can be constructed by sweeping through function values and tracking changes in level set components.
+
+# Persistence (Chapter VII) {#persistence-chapter-vii}
+
+Measures the **scale or resolution of topological features** within data, particularly useful for handling noise.
+
+## Persistent Homology {#persistent-homology .smaller}
+
+-   **Filtration**: A nested sequence of simplicial complexes $\emptyset = K_0 \subseteq K_1 \subseteq \dots \subseteq K_n = K$. This sequence is often derived from a monotonic function $f: K \to \mathbb{R}$ where $K_i = K(a_i) = f^{-1}(-\infty, a_i]$ for sorted values $a_i$.
+-   **Birth and Death**: As one moves through the filtration:
+    -   A homology class $\gamma \in H_p(K_i)$ is **born** at $K_i$ if it is not in the image of the map from $H_p(K_{i-1})$ (i.e., $\gamma \notin H_p^{i-1,i}$).
+    -   It **dies** entering $K_j$ if it merges with an older class (born at $K_{k}$ with $k < i$) when going from $K_{j-1}$ to $K_j$.
+    -   The **Elder Rule** governs this: at a merge, the "older" class (born earlier) persists, and the "younger" one dies.
+-   **Persistence**: For a class born at $K_i$ (value $a_i$) and dying at $K_j$ (value $a_j$), its persistence is $a_j - a_i$.
+-   **Persistent Betti Number ($\beta_{i,j}^p$)**: The rank of $H_p^{i,j} = \text{im}(f_p^{i,j}: H_p(K_i) \to H_p(K_j))$. It counts $p$-dimensional classes born at or before $K_i$ that are still alive at $K_j$.
+-   **Persistence Diagram (Dgm$_p(f)$)**: A multiset of points $(a_i, a_j)$ in $\overline{\mathbb{R}}^2$, where $a_i$ is the birth value and $a_j$ is the death value of a $p$-dimensional homology class. Points are above the diagonal $y=x$; diagonal points (often added with infinite multiplicity) represent features with zero persistence. The vertical distance to the diagonal is the persistence.
+
+
+## Implementation {#implementation .smaller}
+
+-   Persistent homology can be computed efficiently using **matrix reduction** on a single boundary matrix $\partial$ whose rows and columns are ordered compatibly with the filtration.
+-   The algorithm performs left-to-right column additions to obtain a reduced matrix $R = \partial V$.
+-   The **lowest one** in a column $j$ of $R$, say at row $i$ (i.e., $i=\text{low}(j)$), indicates that simplex $\sigma_i$ (birth) is paired with simplex $\sigma_j$ (death).
+    -   If column $j$ is zero, $\sigma_j$ gives birth to a class that might persist indefinitely (or until paired later in an extended context).
+-   This algorithm computes all pairs $(birth, death)$ for the persistence diagram.
+-   **Sparse matrix implementations** are more efficient for large datasets, improving upon the general cubic worst-case complexity. For the 0th persistence diagram, it can be computed in nearly linear time using a union-find data structure.
+
+## Spectral Sequences {#spectral-sequences .smaller}
+
+-   A theoretical tool in algebraic topology that provides a way to compute homology groups of a filtered space in stages.
+-   The algorithm involves reducing the boundary matrix in phases, sweeping diagonally.
+-   The groups $E^r_{p,q}$ in the spectral sequence represent homology classes that persist for at least $r$ "steps" in the filtration (related to the index difference in the function values).
+-   The **Spectral Sequence Theorem** states that the total rank of $E^r_{p,q}$ (for fixed dimension $p+q$) equals the number of points in the $(p+q)$-th persistence diagram with persistence $\ge r$.
+
+
+
+# Stability (Chapter VIII) {#stability-chapter-viii}
+
+Concerns how persistence diagrams (and thus the measured features) change when the input function or data undergoes small perturbations.
+
+## Stability Theorems {#stability-theorems .smaller}
+
+-   **Bottleneck Distance ($W_\infty(X, Y)$)**: A metric between two persistence diagrams $X$ and $Y$. It's the infimum, over all bijections $\eta: X \to Y$ (matching points in $X$ to points in $Y$, including points on the diagonal), of the supremum $L_\infty$-distance between matched points: $W_\infty(X, Y) = \inf_{\eta} \sup_{x \in X} \|x - \eta(x)\|_\infty$.
+-   **Stability Theorem for Filtrations (and Tame Functions)**: A fundamental result stating that the bottleneck distance between the $p$-th persistence diagrams of two monotonic functions $f, g$ on a simplicial complex $K$ (or two tame functions on a triangulable space $X$) is bounded by the $L_\infty$-distance between the functions:
+    -   $W_\infty(\text{Dgm}_p(f), \text{Dgm}_p(g)) \le \|f - g\|_\infty$.
+    -   This means small changes in the function lead to small changes in the persistence diagram (when distance is measured by $W_\infty$).
+-   **Vines and Vineyards**: When considering a straight-line homotopy $f_t = (1-t)f + tg$ between two functions, the points in the persistence diagrams Dgm$_p(f_t)$ trace out polygonal paths called "vines". The collection of these paths is a "vineyard". The existence of these connected vines is a manifestation of stability.
+
+
+## Packages {#packages}
+
+:::: {.columns}
+
+::: {.column width="33%"}
+**tdaverse**
+
+- ripserr
+- inphr
+- tdarec
+- phutil
+- tdarec-grant
+:::
+
+::: {.column width="33%"}
+**tdaverse**
+
+- ggtda
+- tdaverse
+- tdaunif
+- interplex
+:::
+
+::: {.column width="33%"}
+**Other R Packages**
+
+- BayesTDA
+- simplextree
+- TDAstats
+:::
+
+::::
