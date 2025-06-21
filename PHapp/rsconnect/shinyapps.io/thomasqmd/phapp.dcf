@@ -1,0 +1,10 @@
+name: phapp
+title:
+username: thomasqmd
+account: thomasqmd
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14970301
+bundleId: 10495215
+url: https://thomasqmd.shinyapps.io/phapp/
+version: 1
