@@ -1,10 +1,4 @@
-library(shiny)
-library(bslib)
-library(tidyverse)
-library(ggtda)
-library(magick)
-library(ragg)
-
+source("helpers.R")
 ui <- fluidPage(
   theme = bs_theme(version = 5, bootswatch = "pulse"),
   titlePanel("Vietoris-Rips Filtration Animation"),
